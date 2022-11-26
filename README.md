@@ -84,8 +84,8 @@ When all threads are done with the links generation as well (which is guaranteed
 
 The main steps of the graph storing algorithm are the following:
 1. One thread stores at the beginning of the file the informations regarding nodes and links, which are:
-* aa
-* bb
+    * aa
+    * bb
 2. Threads concurrently go through every graph partition 
 
 fcntl
