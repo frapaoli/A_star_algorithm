@@ -3,21 +3,42 @@ Single and multi-threaded implementation of A* algorithm for optimal path planni
 
 
 
-# Design
+# 1. Introduction
 
-## Graph
+A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
+The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
-A graph is a set of nodes connected by a weighted link.
+# 2. Data structures and algorithms design
 
-In code, it is represented by a vector of `Node`.
+For a better understanding of the documentation, the main notations used to describe the algorithm design procedure have been reported below:
+- `graph`: set of nodes connected between them by directed, weighted links.
+- `Node`: data structure representing the graph nodes (more details on this later).
+- `start` and `stop`: source and destination nodes of the A*, respectively.
+- `neighbors` of a node: nodes to which it is connected through a directed, weighted link.
+- `g_cost` of a node: cumulative cost (i.e., weight) of all the links that have to be traversed from `start` in order to arrive at that node.
+- `h_cost` of a node: estimation of the cost of the links that must be traversed from that node to arrive at `stop`, which is computed by an heuristic (more details on this later).
+- `f_cost` of a node: `g_cost` + `h_cost` of that node.
+
+## 2.1 Graph structures
+
+The first implementation choice was to represent a graph as a `std::vector` structure of `Node` objects, whose main features are reported below:
 ```c++
+// set of links (and corresponding weights) that connect a node with its neighbors
+typedef std::unordered_map<unsigned int, unsigned int> link_weight_umap;
+
 class Node {
     unsigned int id;    // node's ID
     int x;              // node's coordinate along x axis
     int y;              // node's coordinate along y axis
     std::unique_ptr<std::unordered_map<unsigned int, unsigned int>> neighbor;     // node's links to neighbor nodes
+    …
 };
 ```
+where:
+- `id` is the unique identifier of each node on the graph.
+- `x` and `y` are the coordinates of the node on the 2D grid onto which the graph is built.
+- `neighbor` is a pointer to a `std::unordered_map` structure containing a set of key-value pairs representing the `id` of the nodes to which the `neighbor` structure owner is connected and the cost of the corresponding links, respectively.
+
 
 Each `Node` is characterized by an unique ID and two coordinates that define the node position.
 The links are represented by listing, for every node, all the nodes it is linked to. This is done with an unordered map `neighbor` with all the linked nodes as a key and the cost of the link as value.
