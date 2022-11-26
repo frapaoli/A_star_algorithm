@@ -1,14 +1,9 @@
-# A* algorithm
-Single and multi-threaded implementation of A* algorithm for optimal path planning.
-
-
-
-# 1. Introduction
+# A* algorithm project
 
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
-# 2. Data structures and algorithms design
+# 1. Data structures and algorithms design
 
 For a better understanding of the documentation, the main notations used to describe the algorithm design procedure have been reported below:
 - `graph`: set of nodes connected between them by directed, weighted links.
@@ -18,8 +13,10 @@ For a better understanding of the documentation, the main notations used to desc
 - `g_cost` of a node: cumulative cost (i.e., weight) of all the links that have to be traversed from `start` in order to arrive at that node.
 - `h_cost` of a node: estimation of the cost of the links that must be traversed from that node to arrive at `stop`, which is computed by an heuristic (more details on this later).
 - `f_cost` of a node: `g_cost` + `h_cost` of that node.
+- `num_nodes`: number of graph nodes
+- `num_threads`: number of threads that are running concurrently.
 
-## 2.1 Graph structures
+## 1.1 Graph structures
 
 The first implementation choice was to represent a graph as a `std::vector` structure of `Node` objects, whose main features are reported below:
 ```c++
@@ -30,7 +27,7 @@ class Node {
     unsigned int id;    // node's ID
     int x;              // node's coordinate along x axis
     int y;              // node's coordinate along y axis
-    std::unique_ptr<std::unordered_map<unsigned int, unsigned int>> neighbor;     // node's links to neighbor nodes
+    std::unique_ptr<link_weight_umap> neighbor;     // node's links to neighbor nodes
     …
 };
 ```
@@ -39,15 +36,60 @@ where:
 - `x` and `y` are the coordinates of the node on the 2D grid onto which the graph is built.
 - `neighbor` is a pointer to a `std::unordered_map` structure containing a set of key-value pairs representing the `id` of the nodes to which the `neighbor` structure owner is connected and the cost of the corresponding links, respectively.
 
+NOTE:
+- `neighbor` is a pointer to a `std::unordered_map` and not a `std::unordered_map` itself because we wanted each `Node` object to be of constant size.
+- Each `Node` has been provided with full copy control features (i.e., constructor, copy/move constructor, copy/move assignment, destructor), overloaded operators and attributes getters/setters, which have been implemented in `graph_gen_store_load.cpp/.h` files.
 
-Each `Node` is characterized by an unique ID and two coordinates that define the node position.
-The links are represented by listing, for every node, all the nodes it is linked to. This is done with an unordered map `neighbor` with all the linked nodes as a key and the cost of the link as value.
-The node in `neighbor` is represented as an unsigned integer and represents the position of the corresponding node in the graph vector.
+## 1.2 Graph generation
+The first task was to implement a graph generation algorithm in order to generate a graph (having up to millions of nodes and links) and to store it in a file, from which it can then be retrieved whenever needed.
+Considering the potentially huge size of the graph, it has been decided to implement the algorithm in a parallel way, so that it could be executed both in single-thread and multi-thread.
+Through the user interface provided by `menu.cpp/.h` files, the user can choose to run the program in order to generate a random graph of a given size (i.e., number of nodes), as well as the number of threads that should concurrently generate the graph’s nodes and links and store them in a long-term memory file.
+
+### 1.2.1 Details about the graph generation procedure
+The function `graph_generation` called by the main thread initializes all the data structures and synchronization primitives needed for the graph generation and then, for each thread that has to run concurrently, an instance of the function `nodes_links_generation` gets launched in order to generate the graph in parallel. Both above mentioned functions are in `graph_gen_store_load.cpp/.h`.
+
+For efficient threads synchronization, the following primitives have been employed:
+- `std::mutex` structures to manage critical code sections that need to be mutually exclusive.
+- `pthread_mutex_t` and `sem_t` structures to implement barriers that allow all threads to “re-align” in a given point in code execution before proceeding further.
+- `std::atomic_flag` to allow threads to lock certain graph partitions that divide the original graph in order to guarantee efficient thread parallelism.  
+
+NOTE:
+- To let threads lock graph partitions, `std::atomic_flag` structures were employed instead of `std::mutex` because, when a certain partition gets locked and “processed” by a thread, the same partition doesn’t need to be processed by any other thread, hence the `std::atomic_flag::test_and_set` method was used for this purpose. The same could be done by `std::mutex::try_lock` method that, however, according to the C++ reference documentation (https://en.cppreference.com/w/cpp/thread/mutex/try_lock) is allowed to fail spuriously: _<<This function is allowed to fail spuriously and return false even if the mutex is not currently locked by any other thread.>>_
+
+### 1.2.2 Nodes generation
+At the beginning of nodes generation, the graph `x`-`y` coordinate space gets evenly divided in a certain number of partitions such that it becomes a 2D square grid where each grid cell is a graph partition having certain `x`-`y` bounds. The number of created partitions is proportional to `num_nodes` and gets computed by the `optimal_graph_axes_partit_size` function in `utilities.cpp/.h` files.
+
+Then, all threads run concurrently to lock graph partitions and, when one gets locked, the corresponding thread generates inside it a certain number of nodes having `x` and `y` coordinates within the partition boundaries. The number of nodes inside each partition gets calculated such that, at the end, the overall number of nodes will equal the `num_nodes` specified by the user.
+
+NOTE: 
+- `optimal_graph_axes_partit_size` function computes the optimal `graph_axes_partit` (i.e., number of graph partitions to be created along `x` and `y` coordinates) in order to have the least overall number of links in the graph to be generated. This is just an implementation choice made in order to obtain a graph where it is “challenging” to find a path between two nodes and to reduce the time needed for the graph generation, but any choice of `graph_axes_partit` strictly greater than zero is totally fine.
+- Excluding cases in which `num_threads` is greater than `num_nodes` (which is very unusual), the number of graph partitions is sufficiently greater than `num_threads` so that faster threads can lock multiple partitions and slower threads don’t become the bottleneck, but it is also not too big in order to avoid excessively increasing the overhead due to threads parallelism.
 
 
-## Graph generation
+### 1.2.3 Links generation
+
+Each thread waits on a barrier for all the others to finish the nodes generation and, when all threads are done, they go through all the graph partitions a second time in order to generate the links of the nodes belonging to each partition.
+
+Links get created between nodes both belonging to the same graph partition and belonging to different but adjacent partitions. In order to decide the number of links to be generated, the following arbitrary choices have been made:
+- the number of links between nodes belonging to the same graph partition is proportional to the `log2` of the number of nodes inside that partition.
+- the number of links going from the nodes of a partition _A_ to the nodes of another partition _B_ adjacent to _A_ is proportional to the `sqrt` of the number of nodes inside partition _B_.
+
+NOTE:
+- It has been chosen to generate at least one incoming link and one outgoing link for every node, so that the resulting graph is strongly connected. Therefore, the proposed graph generation algorithm creates graphs for which there always exists a path between every `start` and `stop` node couple.
+
+
+### 1.2.4 How the graph gets stored in long-term memory
+
+
+
+
 Since the graph can have up to millions of nodes and therefore the graph size can become quite big, we decide to implement the graph generation (and loading) in a multithreaded way. 
-…
+
+the graph is strongly connected
+
+h_cost is computed with the Euclidean norm, so that the heuristic is admissible (...) and consistent (...) and so we are sure that in sequential case the first solution is the optimal one (anything else???)
+
+
 
 ## Graph loading
 …
