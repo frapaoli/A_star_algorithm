@@ -89,13 +89,14 @@ The main steps of the graph storing algorithm are the following:
 * 4 bytes `unsigned int` for the number of graph partitions.
 * For each graph partition, 4 bytes `unsigned int` for the number of links that start from that partition.
 2. Threads concurrently go through every graph partition and, for each of them, store in the file the informations regarding each node of that partition, which are:
-    * 4 bytes `unsigned int` for the node `id`.
+* 4 bytes `unsigned int` for the node `id`.
 * 4 bytes `int` for the node `x` coordinate.
 * 4 bytes `int` for the node `y` coordinate.
 3. Same as step 2., but now threads store in the file the informations regarding the links of each node of graph partitions, which are:
-    * 4 bytes `unsigned int` for the `id` of the node from which the link starts.
-    * 4 bytes `unsigned int` for the `id` of the node in which the link ends.
-    * 4 bytes `unsigned int` for the link’s weight.
+* 4 bytes `unsigned int` for the `id` of the node from which the link starts.
+* 4 bytes `unsigned int` for the `id` of the node in which the link ends.
+* 4 bytes `unsigned int` for the link’s weight.
+
 
 
 NOTE:
