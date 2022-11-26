@@ -80,7 +80,16 @@ NOTE:
 
 ### 1.2.4 How the graph gets stored in long-term memory
 
+When all threads are done with the links generation as well (which is guaranteed by a barrier), the graph data structure can be serialized (i.e., stored) into the file specified by the user through the terminal command window. The graph serialization gets performed in binary format through the `write` system call, so that the graph structure occupies less bytes in the disk.
 
+The main steps of the graph storing algorithm are the following:
+1. One thread stores at the beginning of the file the informations regarding nodes and links, which are:
+* aa
+* bb
+2. Threads concurrently go through every graph partition 
+
+fcntl
+lseek
 
 
 Since the graph can have up to millions of nodes and therefore the graph size can become quite big, we decide to implement the graph generation (and loading) in a multithreaded way. 
@@ -88,6 +97,7 @@ Since the graph can have up to millions of nodes and therefore the graph size ca
 the graph is strongly connected
 
 h_cost is computed with the Euclidean norm, so that the heuristic is admissible (...) and consistent (...) and so we are sure that in sequential case the first solution is the optimal one (anything else???)
+
 
 
 
