@@ -84,19 +84,25 @@ When all threads are done with the links generation as well (which is guaranteed
 
 The main steps of the graph storing algorithm are the following:
 1. One thread stores at the beginning of the file the informations regarding nodes and links, which are:
-    * aa
-    * bb
-2. Threads concurrently go through every graph partition 
+* 4 bytes `unsigned int` for the number of generated nodes.
+* 4 bytes `unsigned int` for the number of generated links.
+* 4 bytes `unsigned int` for the number of graph partitions.
+* For each graph partition, 4 bytes `unsigned int` for the number of links that start from that partition.
+2. Threads concurrently go through every graph partition and, for each of them, store in the file the informations regarding each node of that partition, which are:
+    * 4 bytes `unsigned int` for the node `id`.
+* 4 bytes `int` for the node `x` coordinate.
+* 4 bytes `int` for the node `y` coordinate.
+3. Same as step 2., but now threads store in the file the informations regarding the links of each node of graph partitions, which are:
+    * 4 bytes `unsigned int` for the `id` of the node from which the link starts.
+    * 4 bytes `unsigned int` for the `id` of the node in which the link ends.
+    * 4 bytes `unsigned int` for the link’s weight.
 
-fcntl
-lseek
 
+NOTE:
+- In order to preserve the correctness of the content that gets written into the file, the steps 1., 2., 3. mentioned above are separated by thread barriers.
+- `lseek` and `fcntl` system calls have been employed to, respectively, locate the exact file region where to write and to ensure that, when a thread is writing on a certain file region, no other thread is allowed to write on the same region.
+- Each thread, after writing something in the file, checks the return value of `write` system call in order to guarantee that the number of written bytes is actually correct.
 
-Since the graph can have up to millions of nodes and therefore the graph size can become quite big, we decide to implement the graph generation (and loading) in a multithreaded way. 
-
-the graph is strongly connected
-
-h_cost is computed with the Euclidean norm, so that the heuristic is admissible (...) and consistent (...) and so we are sure that in sequential case the first solution is the optimal one (anything else???)
 
 
 
