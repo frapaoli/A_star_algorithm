@@ -1,11 +1,8 @@
 # A* algorithm project
 
-#aaa
+# aaa
 
 
-
-
-click [here](#aaa)
 
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
@@ -22,6 +19,8 @@ For a better understanding of the documentation, the main notations used to desc
 - `f_cost` of a node: `g_cost` + `h_cost` of that node.
 - `num_nodes`: number of graph nodes
 - `num_threads`: number of threads that are running concurrently.
+
+click [here](#aaa)
 
 ## 1.1 Graph structures
 
