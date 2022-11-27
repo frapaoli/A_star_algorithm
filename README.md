@@ -1,10 +1,7 @@
 # A* algorithm project
 
 where:
-    - `A` is the Golden Ratio,
-    $$
-    \frac{sqrt(5) - 1}{2}
-    $$ hey
+    - `A` is the Golden Ratio, $\frac{\sqrt(5) - 1}{2} $ hey
 
 
 
