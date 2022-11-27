@@ -252,7 +252,7 @@ where:
 - `k` is a value obtained by hashing the `x` and `y` coordinates of the given `Node`. The workload distribution effectiveness of the MHDA* strongly relies on the design of a good hash function that computes `k` from `x` and `y`, which is not a trivial task.
 
 2. Zobrist hash (_ZHDA*_): given a `Node`, the `id` of its owner gets computed by:
-$$R[\x’] \xor R[\y’]$$
+$$R[x’] \xor R[y’]$$
 where:
 
 _**Considerations about the proposed hashing methods**_:
