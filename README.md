@@ -107,9 +107,19 @@ NOTE:
 
 
 
+## 1.3 Graph loading
+Once the algorithm for generating the graph and storing it in a file has been completed, it was necessary to implement a second algorithm that, given the name of a file storing a graph in the long-term memory, is able to rebuild it from the informations stored in the file and to load it in the memory of the running program, so that A* could be executed on it.
+As for the graph generation, considering the potentially huge size of the graph, it has been decided to implement the graph loading algorithm in a parallel way, so that it could be executed both in single-thread and multi-thread.
+Through the user interface provided by `menu.cpp/.h` files, the user can choose to run the program in order to load a graph from a file by specifying the number of threads that should concurrently read the graph’s nodes and links from the files. During this process, the user gets also asked about which A* algorithm versions should be run on the graph after it gets successfully read (more details on this later).
 
-## Graph loading
-…
+deserialization using the same protocol used for serialization of graph in file
+
+
+### 1.3.1 Details about the graph loading procedure
+The function `graph_generation` called by the main thread initializes all the data structures and synchronization primitives needed for the graph generation and then, for each thread that has to run concurrently, an instance of the function `nodes_links_generation` gets launched in order to generate the graph in parallel. Both above mentioned functions are in `graph_gen_store_load.cpp/.h`.
+
+For efficient threads synchronization, the same primitives already discussed in [Section 1.2.1](### 1.2.1 Details about the graph generation procedure) have been employed.
+
 
 
 ## Algorithms
