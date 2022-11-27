@@ -1,8 +1,5 @@
 # A* algorithm project
 
-_Highlighted implementation choices_:
-_*Highlighted implementation choices*_:
-_**Highlighted implementation choices**_:
 
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
