@@ -1,7 +1,8 @@
 # A* algorithm project
 
 where:
-    - `A` is the Golden Ratio, ```math
+    - `A` is the Golden Ratio,
+    ```math
     \frac{sqrt(5) - 1}{2}
     ``` hey
 
