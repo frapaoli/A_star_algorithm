@@ -153,11 +153,12 @@ typedef std::unordered_map<unsigned int, Node> path_umap;
 /******************** Path (i.e. sequence of nodes) of the graph ********************/
 typedef struct graph_path_s {
 
-std::unique_ptr<path_umap> path_ptr;    // path itself
+    std::unique_ptr<path_umap> path_ptr;    // path itself
     unsigned int path_num_nodes;            // number of nodes contained in the path
     std::atomic<int> path_cost;             // path's overall cost
 
 } graph_path_t;
+
 ```
 
 - `open`: a `std::priority_queue` instance that stores the nodes that still need to be visited, together with their `f_cost` and `h_cost`. Each `open` list entry has the following structure:
