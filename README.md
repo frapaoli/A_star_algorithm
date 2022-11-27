@@ -1,7 +1,7 @@
 # A* algorithm project
 
 where:
-    - `A` is the Golden Ratio, ```c++ \frac{sqrt(5) - 1}{2} ``` hey
+    - `A` is the Golden Ratio, ```math \frac{sqrt(5) - 1}{2} ``` hey
 
 
 
