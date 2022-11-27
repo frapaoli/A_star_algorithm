@@ -118,7 +118,7 @@ deserialization using the same protocol used for serialization of graph in file
 ### 1.3.1 Details about the graph loading procedure
 The function `graph_generation` called by the main thread initializes all the data structures and synchronization primitives needed for the graph generation and then, for each thread that has to run concurrently, an instance of the function `nodes_links_generation` gets launched in order to generate the graph in parallel. Both above mentioned functions are in `graph_gen_store_load.cpp/.h`.
 
-For efficient threads synchronization, the same primitives already discussed in [Section 1.2.1](### 1.2.1 Details about the graph generation procedure) have been employed.
+For efficient threads synchronization, the same primitives already discussed in [Section 1.2.1](###1.2.1-details-about-the-graph-generation-procedure) have been employed.
 
 
 
