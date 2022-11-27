@@ -139,15 +139,55 @@ The `best_path` object contains:
 - the number of nodes contained in the path
 
 
-### Sequential A*
+### 1.4.1 Sequential A*
+The sequential A*, as the name suggests, runs on a single thread in a sequential way, so that graph nodes are explored one at a time until the best path (i.e., the path with the least cost) between `start` and `stop` nodes is found.
 
-The sequential A*, as the name indicates, runs on a single thread.
+The following is a list of the main data structures exploited by the Sequential A* in order to carry out a correct algorithm execution:
+- `graph`: a `std::vector<Node>` instance that represents the graph on which we want to run the A*.
+- `start` and `stop`: nodes of `graph` between which we want to find the best path.
+- `best_path`: object where the best path information will be stored, i.e., the sequence of nodes that makes up the path, how many these nodes are and the overall cost of the path. It is an instance of the `graph_path_t` data structure, which is defined as follows:
+```c++
+// set of nodes in a graph's path (the order in which the nodes must be traversed is given by the key of the hash map)
+typedef std::unordered_map<unsigned int, Node> path_umap;
 
-Internally, it uses 4 data structures:
-- `open` is a priority queue storing the nodes that still need to be visited together with its g cost and f cost. Since the open list needs fast insertion and fast removal of the lower cost node, we chose the priority queue because the nodes are always ordered by g (and f in case g is the same). Because the std implementation of priority queues doesn't allow the edit of nodes already inserted, nodes inside the queue can be duplicated (but with different costs). The node with lower cost is always picked up first and any other duplicate will be discarded when it's their turn to be removed from the open list.
-- `closed` is an unordered map used to keep track of nodes that have been already visited. This structure is used to discard duplicates nodes in the open list like described above
-- `from` is an unordered map having as key and value a node and it is used to keep track of the current best path from start to end. It will be read at the end to reconstruct the whole path
-- `cost` is an unordered map having as key a node and as value an integer representing the current best cost to arrive at the specified node. We chose to use an unordered map as the algorithm only requirement is a data structure that is easy to loop through.
+/******************** Path (i.e. sequence of nodes) of the graph ********************/
+typedef struct graph_path_s {
+
+std::unique_ptr<path_umap> path_ptr;    // path itself
+    unsigned int path_num_nodes;            // number of nodes contained in the path
+    std::atomic<int> path_cost;             // path's overall cost
+
+} graph_path_t;
+```
+
+- `open`: a `std::priority_queue` instance that stores the nodes that still need to be visited, together with their `f_cost` and `h_cost`. Each `open` list entry has the following structure:
+```c++
+// tuple that, given a node 'N', stores f(N), h(N) and N itself
+typedef std::tuple<double, double, Node> list_elem;
+```
+
+- `closed`: a `std::unordered_map` instance used to keep track of nodes that have been already visited. Its key-value pairs are made out of, respectively, the `id` of the nodes and their corresponding `list_elem` structure, which is shown above.
+- `from`: a `std::unordered_map` instance having as key-value pairs a `Node` (called _child_ node) and its parent (i.e., the node from which we arrived at the child node), respectively. It is used to keep track of the current best path from `start` to `stop`. It will be read at the end to reconstruct the whole path.
+- `cost`: a `std::unordered_map` instance having as key-value pairs a `Node` and an `unsigned int` representing the current best cost to arrive at it, respectively.
+
+
+_Highlighted implementation choices_:
+- For the `open` structure it has been chosen to use a `std::priority_queue` because it allows fast insertion and fast removal of the lower cost node (both with _O(1)_ complexity), which is what is needed. As a drawback, `std::priority_queue` doesn't allow random access (i.e., doesn’t allow editing nodes already inserted in it), so we cannot update the cost of a node when we find a lower cost path to arrive at it. However, a simple and effective workaround of this is to just duplicate the node in the `open` list with different costs and, thanks to the `std::priority_queue` properties mentioned above, it is guaranteed that the node copy having the lower cost will be always picked up first, and all other duplicates of the same node will be discarded when it's their turn to be removed from the `open` list (we keep track of the nodes already expanded in the `closed` list).
+- The heuristic used to compute the `h_cost` of each node is the Euclidean norm because, besides its simplicity, it is an admissible heuristic (i.e., it never overestimates the distance to the `stop` node) and a consistent heuristic (i.e., satisfies the triangle inequality). An admissible and consistent heuristic guarantees that, when a node gets expanded for the first time, it will be with the lowest possible cost. This statement also implies that, when the Sequential A* reaches for the first time the `stop` node, then the algorithm can terminate because it is for sure the path with the lowest cost. However, the above discussion stands in general only for the Sequential A* and _not_ for the Centralized and Decentralized A* (more details on this later).
+- For the `closed`, `from` and `cost` structures we chose the `std::unordered_map` data type because we wanted constant computational complexity to perform random access on them.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 The sequential algorithm code is pretty simple. As a first step, we add the start node to the open list and then we do in while loop (until the open set is not empty) the following steps:
 - We get the top node from the open list and check if we already visited it and therefore needs to be discarded
@@ -155,6 +195,12 @@ The sequential algorithm code is pretty simple. As a first step, we add the star
 - We loop through the neighbors and, if they are not present in the cost map or the current cost is less than the map cost, we add it to the cost, from and open data structures.
 
 If we exit the while loop because the open list is empty but no solution has been found, it means that the `start` and `end` nodes are not connected.
+
+
+
+rebuild_path_single_thread
+rebuilds the path from "start" to "stop" node in case a single thread has all the information needed to do it (not possible in the Decentralized A*).
+
 
 ### Centralized A*
 
