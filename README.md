@@ -388,6 +388,11 @@ centr A* exhibits slower runtimes than seq A* because the concurrent access to t
 
 
 
+# References
+
+$[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017.
+$[2]$ “Algorithms for distributed termination detection”. Friedemann Mattern. Springer-Verlag, 1987.
+$[3]$ 
 
 
 
