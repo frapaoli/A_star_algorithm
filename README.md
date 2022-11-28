@@ -354,8 +354,8 @@ _**Analysis of above mentioned methods for path rebuild**_:
 1. The circular message passes through each thread a number of times that is less than the number of nodes belonging to the path to be rebuilt.
 2. The `stop` owner has only a partial knowledge of the nodes belonging to the path, and for each unknown node there is an exchange of 2 messages (a `parent_request_t` and a `parent_reply_t`).
 - Worst case:
-1. Being $P$ the number of nodes in the path to rebuild, the circular message gets sent ($P-1$) $\cdot$ (`num_nodes`$+1$) times. This means that, for each node in the path except the `stop` node, the owner of that node will be the last one to receive the message.
-2. Being $P$ the number of nodes in the path to rebuild, the number of sent messages is ($P-1$) $\cdot 2$. This means that, for each node in the path except the `stop` node, a `parent_request_t` and a `parent_reply_t` are being sent.
+1. Being $P$ the number of nodes in the path to rebuild, the circular message gets sent ( $P-1$ ) $\cdot$ (`num_nodes`$+1$) times. This means that, for each node in the path except the `stop` node, the owner of that node will be the last one to receive the message.
+2. Being $P$ the number of nodes in the path to rebuild, the number of sent messages is ( $P-1$ )$\cdot 2$. This means that, for each node in the path except the `stop` node, a `parent_request_t` and a `parent_reply_t` are being sent.
 
 Considering the high `num_nodes` that the program could potentially have to handle on a highly parallel hardware, it has been chosen to implement the approach 2. because it implies a lower estimated number of messages in best, average and worst case scenarios with respect to the approach 1.
 
