@@ -1,6 +1,5 @@
 # A* algorithm project
 
-
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
@@ -57,7 +56,7 @@ For efficient threads synchronization, the following primitives have been employ
 - `std::atomic_flag` to allow threads to lock certain graph partitions that divide the original graph in order to guarantee efficient thread parallelism.  
 
 _**Highlighted implementation choices**_:
-- To let threads lock graph partitions, `std::atomic_flag` structures were employed instead of `std::mutex` because, when a certain partition gets locked and “processed” by a thread, the same partition doesn’t need to be processed by any other thread, hence the `std::atomic_flag::test_and_set` method was used for this purpose. The same could be done by `std::mutex::try_lock` method that, however, according to the C++ reference documentation (https://en.cppreference.com/w/cpp/thread/mutex/try_lock) is allowed to fail spuriously: _\<\<This function is allowed to fail spuriously and return false even if the mutex is not currently locked by any other thread.\>\>_
+- To let threads lock graph partitions, `std::atomic_flag` structures were employed instead of `std::mutex` because, when a certain partition gets locked and “processed” by a thread, the same partition doesn’t need to be processed by any other thread, hence the `std::atomic_flag::test_and_set` method was used for this purpose. The same could be done by `std::mutex::try_lock` method that, however, according to the C++ reference documentation (https://en.cppreference.com/w/cpp/thread/mutex/try_lock) is allowed to fail spuriously: _\<\<This function is allowed to fail spuriously and return false even if the mutex is not currently locked by any other thread.\>\>_.
 
 ### 1.2.2 Nodes generation
 At the beginning of nodes generation, the graph `x`-`y` coordinate space gets evenly divided in a certain number of partitions such that it becomes a 2D square grid where each grid cell is a graph partition having certain `x`-`y` bounds. The number of created partitions is proportional to `num_nodes` and gets computed by the `optimal_graph_axes_partit_size` function in `utilities.cpp/.h` files.
@@ -141,6 +140,8 @@ Considering the state-of-the-art approaches for A* carried out in the literature
 - `Centralized A*` that runs on multiple threads but all the data structures are shared between them and protected by appropriate synchronization primitives.
 - `Decentralized A*` that is a highly optimized parallel version where each thread has its own data structures, so that locks and resources shared among all threads are reduced as much as possible.
 
+Through the user interface provided by `menu.cpp/.h` files, the user can choose which A* versions should be run on the graph, as well as their execution parameters (e.g., `start` and `stop` nodes, `num_threads` for the Centralized and Decentralized A*, hashing method for the Decentralized A*).
+
 Details about each one of the above mentioned versions can be seen in the `a_star.cpp/.h` files and are presented in following sections.
 
 
@@ -185,7 +186,7 @@ _**Highlighted implementation choices**_:
 
 
 ### 2.1.2 Details about the Sequential A* implementation
-The sequential implementation of A* is straight forward: starting from the user specified `start` node, a single thread progressively expands all the lowest cost neighbors of the already visited nodes, until the `stop` node is eventually found.
+The sequential implementation of A* is straightforward: starting from the user specified `start` node, a single thread progressively expands all the lowest cost neighbors of the already visited nodes, until the `stop` node is eventually found.
 
 The main algorithm steps are described below:
 1. Extract from the top of the `open` list the node that is currently reachable with the lowest cost.
@@ -250,47 +251,124 @@ The 3 hashing methods are described below:
 ```
 where:
     - `A` can be any positive number. For this implementation we chose the golden ratio $\frac{1 + \sqrt{5}}{2}$ since it has been shown in the literature that it works quite well for the MHDA*.
-    - `k` is a value obtained by hashing the `x` and `y` coordinates of the given `Node`. The workload distribution effectiveness of the MHDA* strongly relies on the design of a good hash function that computes `k` from `x` and `y`, which is not a trivial task.
+    - `k` is a value obtained by hashing the `x` and `y` coordinates of the given `Node`. The workload distribution effectiveness of the MHDA* strongly relies on the design of a good hash function that computes `k` from `x` and `y`.
 
 
 2. Zobrist hash (_ZHDA*_): given a `Node`, the `id` of its owner gets computed by:
 $$R[x’] \oplus R[y’]$$
 where:
+- $\oplus$ is the _XOR_ operator.
+- $R$ is a random-bit-strings table, i.e., a `std::vector<int>` randomly initialized whose size is equal to the maximum range on which both `x` and `y` coordinates of the nodes can span (e.g., if `x` and `y` can both span between $-10^{4}$ and $+10^{4} - 1$, then the size of $R$ will be $2 \cdot 10^{4}$).
+- $x’$ and $y’$ are obtained, respectively, by adding to `x` and `y` an appropriate value so that it is guaranteed that $x’$ and $y’$ are both $\geq 0$.
+
+3. Abstract Zobrist hash (_AZHDA*_): given a `Node`, the `id` of its owner gets computed by:
+$$R[A(x’)] \oplus R[A(y’)]$$
+where, with respect to the standard ZHDA* approach, it has been added an abstraction feature given by the projection function $A$, which we designed in order to obtain the same $A(x’)$ value for a certain range of $x’$ values near to each other (same for $y’$). This allows us to keep the workload balanced while reducing the thread communication overhead (more details on this later).
 
 _**Considerations about the proposed hashing methods**_:
-1. 
+1. The MHDA* is the simplest hashing approach among the proposed ones and it doesn’t even need to initialize the random-bit-strings table $R$ that is instead need by the ZHDA* and AZHDA* methods. However, this approach suffers the problem of a not completely evenly distributed workload, since it depends on the “randomness” of `k` given a `x`-`y` pair, which is not a trivial task.
+2. The ZHDA* solves the MHDA* problem by employing the random-bit-strings table $R$ and the _XOR_ operator in order to achieve almost-perfect workload balance. However, this implies that the ownership of all graph nodes will be almost-perfectly distributed among all running threads, which leads to a non-negligible additional overhead due to thread communication.
+3. The AZHDA* tries to combine the advantages of both MHDA* and ZHDA*, employing the projection function $A$ in order to keep the workload balanced while reducing as much as possible the overhead due to threads exchange of information about graph nodes. The details about the implementation of the projection function $A$ can be seen in the `a_star.cpp/.h` files.
 
 
 
 
 ### 2.3.2 Decentralized A* data structures
+Other than the ones used by the Sequential A*, the Decentralized A* version exploits the following main data structures:
+- `stop_node_owner`: identifier of the thread that is the owner of the `stop` node.
+- `hash_type`: identifier of the hashing method chosen by the user.
+- `R`: a `std::vector<int>` instance that implements the random-bit-strings table $R$.
+- `threads_synch`: instance of the following data structure, which is used to allow the parallel initialization of the random-bit-strings table $R$:
+```c++
+// pointer to an atomic
+typedef std::unique_ptr<std::atomic_flag> ptr_to_atomic_flag;
+
+std::vector<ptr_to_atomic_flag> threads_synch;
+```
+- `msg_buffer_v`: a `std::vector<msg_buffer_t>` instance that represents the vector containing the local message buffers of all running threads, where each message gets sent from a thread to another in order to share the information about a new possible node to be expanded, together with its `g_cost` and its parent node. The structure of a single message and of a message buffer is reported below:
+```c++
+// message exchanged between threads in multi-threaded Decentralized A* algorithm (the tuple contains node N, cost g(N) and parent(N))
+typedef std::tuple<Node, double, Node> msg_t;
+
+// buffer of messages
+typedef std::queue<msg_t> msg_buffer_t;
+```
+- `parent_request_buffer`: a `std::vector<parent_request_t>` instance that is the buffer of the below data structure instances, which represent the request of a thread to know the parent of a certain `Node`:
+```c++
+/* parent request message (key-value are, respectively, the node of which it is requested to know the parent and the flag that represents if a new parent request arrived or not) */
+typedef std::pair<Node, bool> parent_request_t;
+```
+- `parent_reply_t`: answer provided by a thread to another one in order to reply to a previous parent request. The reply message structure is shown below:
+```c++
+/* parent reply message (key-value are, respectively, the requested parent node and the flag that represents if a new parent reply is available or not) */
+typedef std::pair<Node, bool> parent_reply_t;
+```
+- `acc_msg_counter`: instance of the data structure reported below, which contains the cumulative counters of exchanged messages for each single thread:
+```c++
+/* cumulative counter of sent and received messages for each thread. The first value of std::pair is the vector containing the counter associated with each running thread, while the second value of std::pair represents the ID of the thread that now has to check the cumulative counter. */
+typedef std::pair<std::vector<int>, std::atomic<unsigned int>> acc_msg_counter_t;
+```
+- `algorithm_terminated`: a `std::atomic<bool>` flag that gets set by the thread that is the first to detect that the Decentralized A* termination conditions are fulfilled.
+- `termination_starter_thread`: a `std::atomic<int>` instance that contains the identifier of the thread that started the Decentralized A* termination procedure.
 
 
+**NOTE**: in the Decentralized A*, the only data structures that are shared among all threads are the ones related to the threads hashing procedure (e.g., the random-bit-strings table $R$, that after its initialization gets only read by the threads), message exchange and algorithm termination detection.
 
 
-The algorithm implementation is composed by the following steps, which are being executed in parallel by each thread:
-1. Fill up the random-bit-strings table R (spiegare brevemente perché serve)
-2. Check if the current thread has no useful task to be accomplished other than sleeping on a condition variable (to save CPU computation)
-3. Check if there is any message to be read by the current thread, which would eventually contain the info about a new node to be potentially expanded
-4. Expand a node in the open list (if is there any that is actually worth expanding)
+_**Highlighted implementation choices**_:
+- In the `threads_synch` structure it has been decided to use pointers to `std::atomic_flag` rather than `std::atomic_flag` directly because, according to the C++ reference documentation (https://en.cppreference.com/w/cpp/atomic/atomic): _\<\<std::atomic is neither copyable nor movable.\>\>_.
+- `algorithm_terminated` and `termination_starter_thread` have been chosen to be instances of `std::atomic` because it guarantees that they get read/modified in mutual exclusion without the need of dedicated synchronization primitives.
+
+
+### 2.3.3 Details about the Decentralized A* implementation
+The main idea of the Decentralized A* is to let each thread run the algorithm independently of the other threads, each one storing information about the explored graph region in its own local data structures that, since are _not_ shared among all threads, can be accessed without the need of any synchronization primitive. Since each node has only one owner thread, all threads explore different regions of the graph and, when a new explorable node gets discovered, a message gets sent to its owner in order to notify it about the existence of that node.
+Once the `stop` node gets reached, a series of additional messages get exchanged in order to rebuild the path going backward from `stop` to `start` (more details on this later).
+The algorithm terminates when the information about the number of exchanged messages among all threads satisfies certain conditions (more details on this later).
+
+The main algorithm steps (executed in parallel by each thread) are described below:
+1. Fill up the random-bit-strings table $R$, needed for the ZHDA* and AZHDA* approaches.
+2. Check if the current thread has some nodes to be expanded or if its help is needed in order to rebuild the path from `start` to `stop`. If yes then continue, otherwise the thread starts sleeping on a `std::condition_variable` to save CPU computation and it will be woken up when needed.
+3. Check if there is any message to be read by the current thread, which would eventually contain the information about a new node to be potentially expanded. If yes then read all the messages and add the nodes contained in them to the `open` list of the current thread if it is actually worth it to expand them (which we check with the `add_node_if_worth_expanding` function in `a_star.cpp/.h` files), otherwise continue.
+4. Expand the lowest cost node in the `open` list of the current thread (if it is actually worth it).
+5. If the expanded node is _not_ `stop` then the current thread looks at all the node’s neighbors and sends messages to their owners in order to notify them about the existence of such neighbors. On the contrary, if the expanded node is actually `stop`, then the current node starts the “path rebuild” procedure where a series of messages among threads get exchanged in order to rebuild the path from `start` to `stop`.
+6. Loop through the steps 2-5 until the best path to `stop` node is found or until the Decentralized A* termination conditions are not met. The latter circumstance would mean that there exists no path that connects `start` to `stop`.
+
+_**Highlighted implementation choices**_:
+- The exchange of messages for notifying another thread the existence of a new node to be potentially expanded has been implemented in an asynchronous way, so that both the message sender and receiver avoid wasting time on waiting for the other thread to receive/send the message. On the contrary, the exchange of parent request messages had to be implemented in a synchronous way because, if a thread needs to know the parent of a node in order to rebuild the path from `start` to `stop`, it cannot proceed further until its parent request doesn’t get answered.
+- In case the random-bit-strings table $R$ gets filled up in parallel by multiple threads, it gets evenly divided in a number of partitions that is greater than `num_threads`, which allows faster threads to fill up more $R$ partitions than slower ones, so that the slower thread doesn’t become the bottleneck. This statement doesn’t hold only for graphs where `num_nodes` $<$ `num_threads`, which is very seldom to be found.
 
 
 ### 2.3.4 Decentralized A* path rebuild
-rebuild_path_single_thread
-rebuilds the path from "start" to "stop" node in case a single thread has all the information needed to do it (not possible in the Decentralized A*).
+Since the graph knowledge is distributed among all the threads, rebuilding the path from `start` to `stop` nodes requires in general the intervention of all threads that are the owners of at least one node belonging to the found path, so that they can send the information about those nodes to the thread that is trying to rebuild the path. In particular, for each `Node` instance $A$ belonging to the path we need to know who is its parent, i.e., from which `Node` $B$ the `Node` $A$ comes by following the path from `start` to `stop`.
 
-for rebuilding the path we had two options:
-1. send a circular message (too expensive)
-2. (the method we actually used)
-
+To achieve such goal, we identified two possible “path rebuild” protocols:
+1. The thread that wants to rebuild the path sends a message that will pass through each thread at least once in a “circular” way, where the message contains an empty data structure to be filled with the `Node` instances belonging to the path. When receiving this message, each thread would check if it is the owner of the last `Node` in the path sequence built so far and, if so, it adds to it the parent of the last `Node`. The message passing terminates when the `start` owner eventually adds `start` to the path, so that the message contains all the information needed in order to rebuild the path from `start` to `stop`.
+2. The thread that wants to rebuild the path uses the information that it locally has in order to rebuild at least a part of the path. When it arrives to a `Node` belonging to the path of which it is not the owner, it sends a `parent_request_t` message (see [Section 2.3.2](#232-decentralized-a-data-structures) for the data structure details) to its actual owner that will then eventually reply with a `parent_reply_t` message containing the parent of the `Node`, so that the path rebuilding procedure can continue until it doesn’t arrive to the `start` node.
 
 
-ansynch communication among threads to avoid wasting time
+_**Analysis of above mentioned methods for path rebuild**_:
+- Best case:
+1. The `stop` owner also owns all other nodes belonging to the path, hence no message exchange is needed.
+2. Same as above.
+- Average case:
+1. The circular message passes through each thread a number of times that is less than the number of nodes belonging to the path to be rebuilt.
+2. The `stop` owner has only a partial knowledge of the nodes belonging to the path, and for each unknown node there is an exchange of 2 messages (a `parent_request_t` and a `parent_reply_t`).
+- Worst case:
+1. Being $P$ the number of nodes in the path to rebuild, the circular message gets sent ($P-1$) $\cdot$ (`num_nodes`$+1$) times. This means that, for each node in the path except the `stop` node, the owner of that node will be the last one to receive the message.
+2. Being $P$ the number of nodes in the path to rebuild, the number of sent messages is ($P-1$) $\cdot 2$. This means that, for each node in the path except the `stop` node, a `parent_request_t` and a `parent_reply_t` are being sent.
+
+Considering the high `num_nodes` that the program could potentially have to handle on a highly parallel hardware, it has been chosen to implement the approach 2. because it implies a lower estimated number of messages in best, average and worst case scenarios with respect to the approach 1.
 
 
-### 2.3.4 Decentralized A* termination condition
+**NODE**: in general, it is guaranteed that the thread that wants to rebuild the path only knows the parent of `stop`, since it is owned by that thread.
+
+
+
+### 2.3.4 Decentralized A* termination detection
 As for the Centralized A*, the assumption of admissible + consistent h_cost is not anymore valid.
 
+alg for detecting A* termination 
+vector counting method (or similar?)
 
 
 
@@ -356,5 +434,5 @@ If we exit the while loop because the open list is empty but no solution has bee
 The work is split evenly between threads thanks to the use of a deterministic hash function. When a thread visits a new node and explores its neighbors, it calculates the hash of each of them and sends them to the respective thread.
 Since the hash is deterministic, the same node will always be sent to the same thread.
 
-
+ansynch communication among threads to avoid wasting time
 
