@@ -1,8 +1,5 @@
 # A* algorithm project
 
-use ```sh watch -n 0.5 free -m``` in order to
-
-
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
@@ -400,12 +397,36 @@ _**Highlighted implementation choices**_:
 
 
 # 3. Experimental performance evaluation
+After having implemented all previously discussed algorithms, we conducted a series of practical experiments to evaluate the efficiency and effectiveness of the proposed solutions by recording measures of the elapsed time and the memory usage for each one of them.
 
-after every section (graph gen, read, A* etc) it gets printed the time elapsed in order to evaluate performance
+## 3.1 Measurement of elapsed time and memory usage
+Time measurements were taken by exploiting the `std::chrono::steady_clock::now` method in order to sample the time instants immediately before/after the beginning/termination of each algorithm.
 
-(evaluation of memory usage?) write also the command used (on Ubuntu):
+For the memory usage instead we mainly used two approaches:
+1. Use the `getrusage` function provided by the `sys/resource.h` library in order to store inside an instance of `struct rusage` the statistics related to the memory usage.
+2. Use the following terminal command to visualize the memory usage in real-time, whose values get updated every 0.5 seconds:
+```sh
 watch -n 0.5 free -m
-also used getrusage and both were coherent
+```
+
+Both the above mentioned methods for memory usage tracking showed coherent results and are perfectly fine.
+
+
+## 3.2 Performance evaluation
+This section reports some tables and figures to evaluate the performance (in terms of both elapsed time and memory usage) of the following implemented algorithms:
+- Graph generation and storage
+- Graph loading
+- Sequential A*
+- Centralized A*
+- Decentralized A* (MHDA*)
+- Decentralized A* (ZHDA*)
+- Decentralized A* (AZHDA*)
+
+
+
+first tables, then…
+
+graph with fixed no_threads and with x-y being no_nodes-time_elapsed and plot a curve for each A* version (including all methods). Same thing in one other plot for graph gen, store, read.
 
 
 
