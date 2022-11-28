@@ -1,9 +1,5 @@
 # A* algorithm project
 
-The $i$-th thread
-
-`end[ $i$ ]`
-
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
@@ -208,26 +204,39 @@ The main algorithm steps are described below:
 
 
 
-### Centralized A*
+## 2.2 Centralized A*
 
-Centralized A* is a simple attempt to parallelize the sequential algorithm.
-It uses the same data structures of the sequential algorithm (plus a vector `end` described below) and it shares them between multiple threads.
-The code run by each thread is pretty similar to the sequential case but with 2 main differences.
-First, since data structures can now be accessed concurrently by multiple threads, they need to be protected. For this reason, we have to add 2 locks:
-- m0 for the open set, closed set and the end vector
-- m1 for all the others
-
-We tried to limit the number of locks as much as possible to reduce the associated overhead while still trying to have some kind of parallelism (?)
-
-the assumption of admissible + consistent h_cost is not anymore valid (also for Decentralized A*)
+The Centralized A* is the most intuitive attempt to parallelize the Sequential A*. It relies on common data structures that are shared among all running threads, exploited by them in order to concurrently search for the lowest cost path between `start` and `stop` nodes.
 
 
+### 2.2.1 Centralized A* data structures
+Other than the ones used by the Sequential A*, the Centralized A* version exploits the following main data structures:
+- `end`: a `std::vector<int>` instance used to determine whether the algorithm must terminate or continue (more details on this later).
+- `m0`, `m1` and `m2`: locks used in order to synchronize the threads' access to the shared data structures.
+
+
+### 2.2.2 Details about the Centralized A* implementation
+The Centralized A* runs multiple threads that progressively update their centralized knowledge of the graph by expanding all the lowest cost neighbors of the already visited nodes, until the `stop` node is eventually found.
+
+The main algorithm steps are very similar to the ones of the Sequential A* (see [Section 2.1.2](#212-details-about-the-sequential-a-implementation)) but with 2 key differences:
+1. Since data structures can now be accessed concurrently by multiple threads, they need to be properly protected. For this reason, we had to add 3 `std::mutex` instances:
+- `m0` for synchronizing the access to `open` and `end` structures.
+- `m1` for synchronizing the access to `from` and `cost` structures.
+- `m2` for synchronizing the access to the `closed` list.
+2. In the case of multithreaded execution, having an admissible and consistent heuristic for computing `h_cost` does _not_ guarantee anymore that the first found solution is the globally optimal one. Therefore, for the Centralized A* there is the need of an ad-hoc algorithm termination detection, which is presented in [Section 2.2.3](#223-centralized-a-termination-detection).
 
 
 
-Second, unlike the sequential algorithm, in this case finding a path from start to end does not guarantee it is the shortest. For this reason, we have to continue to open new nodes until either we don't have any nodes left in the open list or the cost of the opened nodes exceeds the cost of the current best path.
-Those conditions must be true for all the threads at the same time. For this reason, there is the need of an algorithm for threads to collectively decide when the computation is finished and the best path has been found.
-In the case of the centralized A*, the termination algorithm is very simple. It uses a shared vector of bool `end` of N elements where N is the number of threads. When all conditions are met, a thread sets `end[thread_id]` to true and to false otherwise. When all elements in `end` are true, the algorithm terminates and all threads exit.
+### 2.2.3 Centralized A* termination detection
+Threads will continue to try to find a new best path solution until either they don't have any nodes left in the `open` list or the cost of all the nodes that can be expanded exceeds the cost of the current best path, in which cases the algorithm must terminate.
+
+In order to properly detect such conditions we employed an `end` vector that, for each thread, stores a 0 or 1 if the above conditions are both met for that thread or not.
+Every time that the $i$-th thread recognizes that the those conditions are both satisfied it sets `end[i]` to 0 and checks the values of all other `end` entries: if all entries are equal to 0 then the algorithm terminates, otherwise `end[i]` gets set back to 1 and the $i$-th thread continues.
+
+
+_**Highlighted implementation choices**_:
+- In order to reduce the overhead due to synchronization locks, we tried to minimize both the number of locks and the size (i.e., number of instructions) of the critical sections protected by those locks.
+
 
 
 
@@ -352,28 +361,34 @@ To achieve such goal, we identified two possible “path rebuild” protocols:
 
 _**Analysis of above mentioned methods for path rebuild**_:
 - Best case:
-    1. The `stop` owner also owns all other nodes belonging to the path, hence no message exchange is needed.
-    2. Same as above.
-    3. 
+1. The `stop` owner also owns all other nodes belonging to the path, hence no message exchange is needed.
+2. Same as above.
 - Average case:
-    1. The circular message passes through each thread a number of times that is less than the number of nodes belonging to the path to be rebuilt.
-    2. The `stop` owner has only a partial knowledge of the nodes belonging to the path, and for each unknown node there is an exchange of 2 messages (a `parent_request_t` and a `parent_reply_t`).
+1. The circular message passes through each thread a number of times that is less than the number of nodes belonging to the path to be rebuilt.
+2. The `stop` owner has only a partial knowledge of the nodes belonging to the path, and for each unknown node there is an exchange of 2 messages (a `parent_request_t` and a `parent_reply_t`).
 - Worst case:
-    1. Being $P$ the number of nodes in the path to rebuild, the circular message gets sent ( $P-1$ ) $\cdot$ ( `num_nodes`$-1$ ) times. This means that, for each node in the path except the `stop` node, the owner of that node will be the last one to receive the message.
-    2. Being $P$ the number of nodes in the path to rebuild, the number of sent messages is ( $P-1$ ) $\cdot 2$. This means that, for each node in the path except the `stop` node, a `parent_request_t` and a `parent_reply_t` are being sent.
+1. Being $P$ the number of nodes in the path to rebuild, the circular message gets sent ( $P-1$ ) $\cdot$ ( `num_nodes`$-1$ ) times. This means that, for each node in the path except the `stop` node, the owner of that node will be the last one to receive the message.
+2. Being $P$ the number of nodes in the path to rebuild, the number of sent messages is ( $P-1$ ) $\cdot 2$. This means that, for each node in the path except the `stop` node, a `parent_request_t` and a `parent_reply_t` are being sent.
 
 Considering the high `num_nodes` that the program could potentially have to handle on a highly parallel hardware, it has been chosen to implement the approach 2. because it implies a lower estimated number of messages in best, average and worst case scenarios with respect to the approach 1.
 
 
-**NODE**: in general, it is guaranteed that the thread that wants to rebuild the path only knows the parent of `stop`, since it is owned by that thread.
+**NODE**: in general, it is guaranteed that the thread that wants to rebuild the path knows at least the parent of `stop`, since the latter is owned by that thread.
 
 
 
 ### 2.3.4 Decentralized A* termination detection
-As for the Centralized A*, the assumption of admissible + consistent h_cost is not anymore valid.
+As for the Centralized A*, the assumption of the first found solution being the globally optimal one that relies on an admissible and consistent heuristic for computing `h_cost` does _not_ stand anymore in case of multi-thread execution.
+For this reason, there is the need to implement a multithreaded A* termination detection algorithm. Looking at the literature, it has been decided to implement a slightly modified version of the _Vector counters algorithm_, whose main idea is described below:
 
-alg for detecting A* termination 
-vector counting method (or similar?)
+Each thread has a `msg_counter`, a local `std::vector<int>` instance that counts the number of sent/received messages to/by the thread. For the $i$-th thread, the $j$-th entry of `msg_counter` with $i \ne j$ is a value $\geq 0$ that represents the number of messages sent by the $i$-th thread to the $j$-th thread, while the $i$-th entry of `msg_counter` is a value $\leq 0$ that represents the number of messages received by the $i$-th thread that were sent by other threads.
+Moreover, there is a `acc_msg_counter` message that cycles through all threads and that stores the cumulative sum of all the thread local `msg_counter` vectors.
+If the `acc_msg_counter` message manages to do a complete cycle through all threads remaining with all entries equal to $0$ for entire time then the best path from `start` to `stop` (if any) has been already found and the Decentralized A* can terminate.
+
+
+_**Highlighted implementation choices**_:
+- The `acc_msg_counter` message doesn’t get sent from the $i$-th thread to the next one until the $i$-th entry of `acc_msg_counter` isn’t $\leq 0$, because it would mean that the $i$-th thread didn’t read all the messages it received so far. This detail allows us to save useless message passing.
+- We considered the implementation of other possible A* termination detection algorithms such as the _Four counter algorithm_, the _Time algorithm_ and the _Channel counting algorithm_. However, among the mentioned approaches, the _Vector counters algorithm_ seemed to be the best choice for its simplicity and for being a single wave detection algorithm.
 
 
 
@@ -387,9 +402,17 @@ after every section (graph gen, read, A* etc) it gets printed the time elapsed i
 
 (evaluation of memory usage?) write also the command used (on Ubuntu):
 watch -n 0.5 free -m
+also used getrusage and both were coherent
 
 
+
+_**Interpretation of the observed performance**_:
+
+
+as also discussed in [5] (ovvero il paper di quer), …
 centr A* exhibits slower runtimes than seq A* because the concurrent access to the open list is the bottleneck, which makes the scalability of the centr A* limited. If expanding a node would have been a lot more expensive than what is now, centr A* would have probably be faster than seq A* because the access to the open list would have not been anymore the bottleneck.
+
+
 
 
 
@@ -397,7 +420,7 @@ centr A* exhibits slower runtimes than seq A* because the concurrent access to t
 
 $[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017.
 
-$[2]$ “Algorithms for distributed termination detection”. Friedemann Mattern. Springer-Verlag, 1987.
+$[2]$ “Algorithms for distributed termination detection”. Friedemann Mattern. 1987.
 
 $[3]$ 
 
@@ -447,4 +470,9 @@ The work is split evenly between threads thanks to the use of a deterministic ha
 Since the hash is deterministic, the same node will always be sent to the same thread.
 
 ansynch communication among threads to avoid wasting time
+
+Second, unlike the sequential algorithm, in this case finding a path from start to end does not guarantee it is the shortest. For this reason, we have to continue to open new nodes until either we don't have any nodes left in the open list or the cost of the opened nodes exceeds the cost of the current best path.
+Those conditions must be true for all the threads at the same time. For this reason, there is the need of an algorithm for threads to collectively decide when the computation is finished and the best path has been found.
+In the case of the centralized A*, the termination algorithm is very simple. It uses a shared vector of bool `end` of N elements where N is the number of threads. When all conditions are met, a thread sets `end[thread_id]` to true and to false otherwise. When all elements in `end` are true, the algorithm terminates and all threads exit.
+
 
