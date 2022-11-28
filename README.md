@@ -1,8 +1,6 @@
 # A* algorithm project
 
-```sh
-watch -n 0.5 free -m
-```
+use ```sh watch -n 0.5 free -m``` in order to
 
 
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
