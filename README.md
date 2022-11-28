@@ -1,11 +1,5 @@
 # A* algorithm project
 
-| 1 | 2 | 3 |        |   |
-|---|---|---|--------|---|
-|   |   |   |        |   |
-|   |   |   | 4.0667 |   |
-|   |   |   |        | 5 |
-
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
@@ -269,8 +263,8 @@ The 3 hashing methods are described below:
 (int) (num_threads * (k*A - (int) (k*A)))
 ```
 where:
-    - `A` can be any positive number. For this implementation we chose the golden ratio $\frac{1 + \sqrt{5}}{2}$ since it has been shown in the literature that it works quite well for the MHDA*.
-    - `k` is a value obtained by hashing the `x` and `y` coordinates of the given `Node`. The workload distribution effectiveness of the MHDA* strongly relies on the design of a good hash function that computes `k` from `x` and `y`.
+- `A` can be any positive number. For this implementation we chose the golden ratio $\frac{1 + \sqrt{5}}{2}$ since it has been shown in the literature that it works quite well for the MHDA*.
+- `k` is a value obtained by hashing the `x` and `y` coordinates of the given `Node`. The workload distribution effectiveness of the MHDA* strongly relies on the design of a good hash function that computes `k` from `x` and `y`.
 
 
 2. Zobrist hash (_ZHDA*_): given a `Node`, the `id` of its owner gets computed by:
@@ -428,7 +422,7 @@ This section reports some tables and figures to evaluate the performance (in ter
 - Decentralized A* (ZHDA*)
 - Decentralized A* (AZHDA*)
 
-
+The experiments have been conducted by considering different graph sizes (up to 5 millions of nodes) and different number of threads (up to 16). Running the algorithms on graphs with 10 millions of nodes or more showed to be very time expensive and the elapsed time is highly variable depending on the `start` and `stop` distance on the graph, so we decided to limit our tests to 5 millions of nodes. Moreover, the tests have been conducted on a hardware with a 8 core CPU, so we considered it meaningless to run more than 16 threads in parallel (we tried with 16 threads to see what happens when the number of threads is greater than the actual available CPU cores).
 
 first tables, then…
 
