@@ -350,6 +350,7 @@ _**Analysis of above mentioned methods for path rebuild**_:
 - Best case:
     1. The `stop` owner also owns all other nodes belonging to the path, hence no message exchange is needed.
     2. Same as above.
+    3. 
 - Average case:
     1. The circular message passes through each thread a number of times that is less than the number of nodes belonging to the path to be rebuilt.
     2. The `stop` owner has only a partial knowledge of the nodes belonging to the path, and for each unknown node there is an exchange of 2 messages (a `parent_request_t` and a `parent_reply_t`).
