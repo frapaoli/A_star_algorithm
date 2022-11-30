@@ -84,7 +84,7 @@ Each thread waits on a barrier for all the others to finish the nodes generation
 Links get created between nodes both belonging to the same graph partition and belonging to different but adjacent partitions. In order to decide the number of links to be generated and their weight, the following arbitrary choices have been made:
 - The number of links between nodes belonging to the same graph partition is random and proportional to the `log2` of the number of nodes inside that partition.
 - The number of links going from the nodes of a partition _A_ to the nodes of another partition _B_ adjacent to _A_ is deterministic and proportional to the `sqrt` of the number of nodes inside partition _B_.
-- The weight of each link is equal to the Euclidean distance on the `x`-`y` plane between the two nodes that the links connect, multiplied by a random `float` factor between 1 and 2.
+- The weight of each link is equal to the Euclidean distance on the `x`-`y` plane between the two nodes that the links connect, multiplied by a random `float` coefficient between 1 and 2.
 
 _**Highlighted implementation choices**_:
 - It has been chosen to generate at least one incoming link and one outgoing link for every node, so that the resulting graph is strongly connected. Therefore, the proposed graph generation algorithm creates graphs for which there always exists a path between every `start` and `stop` node couple.
