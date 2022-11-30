@@ -1,5 +1,14 @@
 # A* algorithm project
 
+| _(elapsed time / MAX memory usage)_ | **Number of nodes** | 1K | 10K | 100K | 1M | 5M |
+|:-----------------------------------:|:-------------------:|:--:|:---:|:----:|:--:|:--:|
+|        **Number of threads**        |   _(seconds / MB)_  |    |     |      |    |    |
+|                  1                  |                     |    |     |      |    |    |
+|                  2                  |                     |    |     |      |    |    |
+|                  4                  |                     |    |     |      |    |    |
+|                  8                  |                     |    |     |      |    |    |
+|                  16                 |                     |    |     |      |    |    |
+
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
