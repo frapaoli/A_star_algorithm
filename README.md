@@ -274,7 +274,7 @@ The 3 hashing methods are described below:
 (int) (num_threads * (k*A - (int) (k*A)))
 ```
 where:
-- `A` can be any positive number. For this implementation we chose the golden ratio $\frac{1 + \sqrt{5}}{2}$ since it has been shown in the literature that it works quite well for the MHDA*.
+- `A` can be any positive number. For this implementation we chose the golden ratio $\frac{1 + \sqrt{5}}{2}$ since it has been shown in the literature [[1](#references)] that it works quite well for the MHDA*.
 - `k` is a value obtained by hashing the `x` and `y` coordinates of the given `Node`. The workload distribution effectiveness of the MHDA* strongly relies on the design of a good hash function that computes `k` from `x` and `y`.
 
 
