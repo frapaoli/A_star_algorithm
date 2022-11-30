@@ -1,7 +1,7 @@
 # A* algorithm project
 
 \
-<center>Graph generation and storage<\center>
+<center>Graph generation and storage</center>
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
 | **Number of threads** |                     |                    |                    |                   |                   |                   |
