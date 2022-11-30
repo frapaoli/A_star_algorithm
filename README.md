@@ -145,7 +145,7 @@ Once this procedure has been carried out successfully, the graph will be found i
 
 
 # 2. A* data structures and algorithms design
-Considering the state-of-the-art approaches for A* carried out in the literature of path search algorithms, it has been decided to implement 3 different versions of the A* algorithm, of which one is single-thread and the other two allow multi-thread execution:
+Considering the state-of-the-art approaches for A* carried out in the literature of path search algorithms [[1](#references)], it has been decided to implement 3 different versions of the A* algorithm, of which one is single-thread and the other two allow multi-thread execution:
 - `Sequential A*` that is the classical A* algorithm running on a single thread.
 - `Centralized A*` that runs on multiple threads but all the data structures are shared between them and protected by appropriate synchronization primitives.
 - `Decentralized A*` that is a highly optimized parallel version where each thread has its own data structures, so that locks and resources shared among all threads are reduced as much as possible.
@@ -543,7 +543,7 @@ _**Interpretation of the observed performance**_:
 \
 # References
 
-$[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017, pp. 7.
+$[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017.
 
 $[2]$ “Algorithms for distributed termination detection”. Friedemann Mattern. 1987.
 
