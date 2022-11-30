@@ -1,92 +1,5 @@
 # A* algorithm project
 
-\
-**Graph generation and storage**
-
-|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
-|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
-| **Number of threads** |                     |                    |                    |                   |                   |                   |
-|           1           |                     | 0.055169 / 4.35156 | 0.530063 / 7.58594 |  4.87208 / 39.457 |  71.6307 / 359.25 |  541.84 / 1817.08 |
-|           2           |                     |  0.040257 / 4.3619 | 0.346516 / 7.60156 | 3.37839 / 39.1602 | 50.3322 / 358.812 | 362.087 / 1816.53 |
-|           4           |                     |  0.03432 / 4.4375  | 0.262055 / 7.69531 | 2.64146 / 39.1836 | 39.4258 / 358.547 | 244.436 / 1815.38 |
-|           8           |                     | 0.032334 / 4.44922 | 0.233928 / 7.76406 | 2.27942 / 40.0156 | 30.2161 / 358.102 | 199.074 / 1814.55 |
-|           16          |                     | 0.035214 / 4.64062 | 0.239406 / 7.80078 | 2.29094 / 40.0352 | 30.7495 / 357.441 | 200.449 / 1813.41 |
-
-\
-**Graph loading**
-|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
-|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
-| **Number of threads** |                     |                    |                    |                   |                   |                   |
-|           1           |                     | 0.045577 / 4.07203 | 0.304131 / 6.71641 | 2.85926 / 33.6094 | 28.4749 / 302.602 | 151.372 / 1542.91 |
-|           2           |                     | 0.038893 / 4.06641 |  0.16732 / 6.78906 | 1.63635 / 33.6367 | 16.0978 / 302.539 | 83.6401 / 1542.95 |
-|           4           |                     | 0.028358 / 4.10547 | 0.139257 / 6.82031 | 1.07005 / 33.6562 | 10.8462 / 302.383 | 56.3388 / 1542.97 |
-|           8           |                     | 0.026901 / 4.13281 | 0.106061 / 6.83594 | 1.04317 / 33.8242 |  10.2839 / 302.82 | 54.3539 / 1543.16 |
-|           16          |                     | 0.027909 / 4.21875 | 0.108464 / 6.96484 | 1.05605 / 34.0273 | 10.3098 / 302.977 | 54.4023 / 1543.35 |
-
-\
-**Sequential A\***
-|    _(seconds / MB)_   | **Number of nodes** |         1K         |        10K        |        100K       |         1M        |         5M        |
-|:---------------------:|:-------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|
-| **Number of threads** |                     |                    |                   |                   |                   |                   |
-|           1           |                     | 0.012405 / 4.79219 | 0.17472 / 14.0825 | 1.61875 / 90.6016 | 28.1928 / 1036.73 | 161.805 / 4515.04 |
-
-\
-**Centralized A\***
-|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
-|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
-| **Number of threads** |                     |                    |                    |                   |                   |                   |
-|           1           |                     |   0.014952 / 4.75  | 0.202433 / 14.1289 | 1.88879 / 91.7008 |  34.802 / 1039.46 | 184.752 / 4844.48 |
-|           2           |                     | 0.015194 / 4.89062 | 0.207532 / 14.1641 |  1.9169 / 91.7695 | 34.8771 / 1039.35 | 205.582 / 4845.54 |
-|           4           |                     | 0.015219 / 4.83594 | 0.217666 / 14.2703 | 1.92514 / 91.9141 | 35.9054 / 1039.43 | 210.185 / 4845.59 |
-|           8           |                     | 0.016471 / 4.86328 | 0.221772 / 14.4141 |  2.01158 / 92.082 | 36.5557 / 1039.66 | 213.676 / 4846.53 |
-|           16          |                     | 0.016523 / 5.10938 | 0.224758 / 14.5781 | 2.23012 / 92.1602 |  36.8672 / 1039.7 | 218.129 / 4846.71 |
-
-\
-**Decentralized A\* (MHDA\*)**
-|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
-|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
-| **Number of threads** |                     |                    |                    |                   |                   |                   |
-|           1           |                     | 0.018787 / 4.71875 | 0.213573 / 14.0582 | 2.76838 / 91.4609 |  43.954 / 1042.18 | 240.601 / 4841.23 |
-|           2           |                     |  0.016057 / 4.7875 | 0.181829 / 14.0586 | 1.49339 / 91.7305 | 27.6196 / 1042.32 | 150.251 / 4815.43 |
-|           4           |                     | 0.012941 / 4.80469 | 0.144451 / 14.1133 | 1.12486 / 92.1805 | 24.5934 / 1041.54 | 130.166 / 4796.96 |
-|           8           |                     |  0.012449 / 5.125  | 0.119541 / 14.6562 | 0.941376 / 92.593 | 20.1785 / 1040.21 | 114.834 / 4663.49 |
-|           16          |                     | 0.013199 / 5.28906 | 0.137609 / 14.9609 | 1.13545 / 93.0442 | 21.7814 / 1040.16 | 119.531 / 4731.64 |
-
-\
-**Decentralized A\* (ZHDA\*)**
-|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
-|:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
-| **Number of threads** |                     |                    |                    |                    |                   |                   |
-|           1           |                     | 0.016247 / 4.48828 | 0.223257 / 13.9375 |  1.99839 / 91.5391 | 44.6416 / 1041.93 | 229.852 / 4984.34 |
-|           2           |                     |  0.01698 / 4.55078 | 0.179181 / 14.0586 |  1.53949 / 91.9336 |  26.492 / 1042.02 | 145.046 / 4941.23 |
-|           4           |                     | 0.016338 / 4.92656 | 0.131263 / 14.2148 |   1.116 / 92.3883  | 21.5166 / 1040.94 | 127.488 / 4709.14 |
-|           8           |                     |  0.015492 / 5.4375 | 0.120467 / 14.6953 | 0.981628 / 92.7203 | 18.5199 / 1040.72 |  109.693 / 4589.4 |
-|           16          |                     | 0.016504 / 5.69688 |  0.163986 / 15.168 |  1.15712 / 92.9297 |  19.585 / 1040.96 | 113.789 / 4616.35 |
-
-\
-**Decentralized A\* (AZHDA\*)**
-|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
-|:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
-| **Number of threads** |                     |                    |                    |                    |                   |                   |
-|           1           |                     | 0.017603 / 4.39394 |  0.226551 / 14.125 |  2.2702 / 91.4336  | 42.4455 / 1042.23 | 225.372 / 4934.09 |
-|           2           |                     | 0.016572 / 4.63288 | 0.171847 / 14.1406 |  1.58529 / 92.0547 | 26.7868 / 1041.72 | 148.069 / 4852.21 |
-|           4           |                     | 0.016741 / 4.91147 | 0.163666 / 14.2891 |  1.17564 / 92.5547 | 21.7154 / 1041.11 | 121.232 / 4711.99 |
-|           8           |                     |  0.015459 / 5.5411 | 0.133043 / 14.7461 | 0.964376 / 92.8047 | 16.8314 / 1040.64 | 96.7369 / 4608.57 |
-|           16          |                     | 0.017125 / 5.71443 | 0.156789 / 14.8867 |  1.1077 / 93.0781  | 16.1493 / 1041.07 |  99.955 / 4685.43 |
-
-
-\
-![plot01_10](./doc_images/01_10.png "")
-![plot02_11](./doc_images/02_11.png "")
-![plot03_12](./doc_images/03_12.png "")
-![plot04_13](./doc_images/04_13.png "")
-![plot05_14](./doc_images/05_14.png "")
-![plot06_15](./doc_images/06_15.png "")
-![plot07_16](./doc_images/07_16.png "")
-![plot08_17](./doc_images/08_17.png "")
-![plot09_18](./doc_images/09_18.png "")
-
-
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
 
@@ -509,81 +422,117 @@ This section reports some tables and figures to evaluate the performance (in ter
 - Decentralized A* (ZHDA*)
 - Decentralized A* (AZHDA*)
 
-The experiments have been conducted by considering different graph sizes (up to 5 millions of nodes) and different number of threads (up to 16). Running the algorithms on graphs with 10 millions of nodes or more showed to be very time expensive and the elapsed time is highly variable depending on the `start` and `stop` distance on the graph, so we decided to limit our tests to 5 millions of nodes. Moreover, the tests have been conducted on a hardware with a 8 core CPU, so we considered it meaningless to run more than 16 threads in parallel (we tried with 16 threads to see what happens when the number of threads is greater than the actual available CPU cores).
-
-first tables, then…
-
-graph with fixed no_threads and with x-y being no_nodes-time_elapsed and plot a curve for each A* version (including all methods). Same thing in one other plot for graph gen, store, read.
-
+_**Highlighted testing choices**_:
+- The experiments have been conducted by considering different graph sizes (up to 5 millions of nodes) and different number of threads (up to 16). Running the algorithms on graphs with 10 millions of nodes or more showed to be very time expensive and the elapsed time is highly variable depending on the `start` and `stop` distance on the graph, so we decided to limit our tests to 5 millions of nodes. Moreover, the tests have been conducted on a hardware with a 8 core CPU, so we considered it meaningless to run more than 16 threads in parallel (we tried with 16 threads to see what happens when the number of threads is greater than the actual available CPU cores).
+- Since the execution time is highly depended on the `start` and `stop` nodes relative position on the graph, the A* versions have all been run by choosing `start` and `stop` indexes equal to $0$ and $\frac{`num_nodes`}{2}$, respectively, so that the tests could simulate an average complexity case.
+- Regarding the memory usage, we report the maximum number of megabytes (MB) of physical memory that process used simultaneously.
 
 
+
+\
+### 3.2.1 Graph generation and storage
+
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                    |                   |                   |                   |
+|           1           |                     | 0.055169 / 4.35156 | 0.530063 / 7.58594 |  4.87208 / 39.457 |  71.6307 / 359.25 |  541.84 / 1817.08 |
+|           2           |                     |  0.040257 / 4.3619 | 0.346516 / 7.60156 | 3.37839 / 39.1602 | 50.3322 / 358.812 | 362.087 / 1816.53 |
+|           4           |                     |  0.03432 / 4.4375  | 0.262055 / 7.69531 | 2.64146 / 39.1836 | 39.4258 / 358.547 | 244.436 / 1815.38 |
+|           8           |                     | 0.032334 / 4.44922 | 0.233928 / 7.76406 | 2.27942 / 40.0156 | 30.2161 / 358.102 | 199.074 / 1814.55 |
+|           16          |                     | 0.035214 / 4.64062 | 0.239406 / 7.80078 | 2.29094 / 40.0352 | 30.7495 / 357.441 | 200.449 / 1813.41 |
+
+\
+### 3.2.2 Graph loading
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                    |                   |                   |                   |
+|           1           |                     | 0.045577 / 4.07203 | 0.304131 / 6.71641 | 2.85926 / 33.6094 | 28.4749 / 302.602 | 151.372 / 1542.91 |
+|           2           |                     | 0.038893 / 4.06641 |  0.16732 / 6.78906 | 1.63635 / 33.6367 | 16.0978 / 302.539 | 83.6401 / 1542.95 |
+|           4           |                     | 0.028358 / 4.10547 | 0.139257 / 6.82031 | 1.07005 / 33.6562 | 10.8462 / 302.383 | 56.3388 / 1542.97 |
+|           8           |                     | 0.026901 / 4.13281 | 0.106061 / 6.83594 | 1.04317 / 33.8242 |  10.2839 / 302.82 | 54.3539 / 1543.16 |
+|           16          |                     | 0.027909 / 4.21875 | 0.108464 / 6.96484 | 1.05605 / 34.0273 | 10.3098 / 302.977 | 54.4023 / 1543.35 |
+
+\
+### 3.2.3 Sequential A*
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |        10K        |        100K       |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                   |                   |                   |                   |
+|           1           |                     | 0.012405 / 4.79219 | 0.17472 / 14.0825 | 1.61875 / 90.6016 | 28.1928 / 1036.73 | 161.805 / 4515.04 |
+
+\
+**Centralized A\***
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                    |                   |                   |                   |
+|           1           |                     |   0.014952 / 4.75  | 0.202433 / 14.1289 | 1.88879 / 91.7008 |  34.802 / 1039.46 | 184.752 / 4844.48 |
+|           2           |                     | 0.015194 / 4.89062 | 0.207532 / 14.1641 |  1.9169 / 91.7695 | 34.8771 / 1039.35 | 205.582 / 4845.54 |
+|           4           |                     | 0.015219 / 4.83594 | 0.217666 / 14.2703 | 1.92514 / 91.9141 | 35.9054 / 1039.43 | 210.185 / 4845.59 |
+|           8           |                     | 0.016471 / 4.86328 | 0.221772 / 14.4141 |  2.01158 / 92.082 | 36.5557 / 1039.66 | 213.676 / 4846.53 |
+|           16          |                     | 0.016523 / 5.10938 | 0.224758 / 14.5781 | 2.23012 / 92.1602 |  36.8672 / 1039.7 | 218.129 / 4846.71 |
+
+\
+### 3.2.4 Decentralized A* (MHDA*)
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                    |                   |                   |                   |
+|           1           |                     | 0.018787 / 4.71875 | 0.213573 / 14.0582 | 2.76838 / 91.4609 |  43.954 / 1042.18 | 240.601 / 4841.23 |
+|           2           |                     |  0.016057 / 4.7875 | 0.181829 / 14.0586 | 1.49339 / 91.7305 | 27.6196 / 1042.32 | 150.251 / 4815.43 |
+|           4           |                     | 0.012941 / 4.80469 | 0.144451 / 14.1133 | 1.12486 / 92.1805 | 24.5934 / 1041.54 | 130.166 / 4796.96 |
+|           8           |                     |  0.012449 / 5.125  | 0.119541 / 14.6562 | 0.941376 / 92.593 | 20.1785 / 1040.21 | 114.834 / 4663.49 |
+|           16          |                     | 0.013199 / 5.28906 | 0.137609 / 14.9609 | 1.13545 / 93.0442 | 21.7814 / 1040.16 | 119.531 / 4731.64 |
+
+\
+### 3.2.5 Decentralized A* (ZHDA*)
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                    |                    |                   |                   |
+|           1           |                     | 0.016247 / 4.48828 | 0.223257 / 13.9375 |  1.99839 / 91.5391 | 44.6416 / 1041.93 | 229.852 / 4984.34 |
+|           2           |                     |  0.01698 / 4.55078 | 0.179181 / 14.0586 |  1.53949 / 91.9336 |  26.492 / 1042.02 | 145.046 / 4941.23 |
+|           4           |                     | 0.016338 / 4.92656 | 0.131263 / 14.2148 |   1.116 / 92.3883  | 21.5166 / 1040.94 | 127.488 / 4709.14 |
+|           8           |                     |  0.015492 / 5.4375 | 0.120467 / 14.6953 | 0.981628 / 92.7203 | 18.5199 / 1040.72 |  109.693 / 4589.4 |
+|           16          |                     | 0.016504 / 5.69688 |  0.163986 / 15.168 |  1.15712 / 92.9297 |  19.585 / 1040.96 | 113.789 / 4616.35 |
+
+\
+### 3.2.6 Decentralized A* (AZHDA*)
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                    |                    |                   |                   |
+|           1           |                     | 0.017603 / 4.39394 |  0.226551 / 14.125 |  2.2702 / 91.4336  | 42.4455 / 1042.23 | 225.372 / 4934.09 |
+|           2           |                     | 0.016572 / 4.63288 | 0.171847 / 14.1406 |  1.58529 / 92.0547 | 26.7868 / 1041.72 | 148.069 / 4852.21 |
+|           4           |                     | 0.016741 / 4.91147 | 0.163666 / 14.2891 |  1.17564 / 92.5547 | 21.7154 / 1041.11 | 121.232 / 4711.99 |
+|           8           |                     |  0.015459 / 5.5411 | 0.133043 / 14.7461 | 0.964376 / 92.8047 | 16.8314 / 1040.64 | 96.7369 / 4608.57 |
+|           16          |                     | 0.017125 / 5.71443 | 0.156789 / 14.8867 |  1.1077 / 93.0781  | 16.1493 / 1041.07 |  99.955 / 4685.43 |
+
+
+\
+### 3.2.7 Elapsed time and memory usage plots
+![plot01_10](./doc_images/01_10.png "")
+![plot02_11](./doc_images/02_11.png "")
+![plot03_12](./doc_images/03_12.png "")
+![plot04_13](./doc_images/04_13.png "")
+![plot05_14](./doc_images/05_14.png "")
+![plot06_15](./doc_images/06_15.png "")
+![plot07_16](./doc_images/07_16.png "")
+![plot08_17](./doc_images/08_17.png "")
+![plot09_18](./doc_images/09_18.png "")
+
+\
 _**Interpretation of the observed performance**_:
+- As expected, an increasing value of `num_threads` improves the time performance of the graph generation, storage and loading algorithms, while their memory usage is almost independent from it (the memory allocated to run new threads is negligible with respect to the memory needed to generate/store/load the graph).
+- As expected, for single-thread executions the Sequential A* is the algorithm version that performs best in both elapsed time and memory usage, but the performance of the Decentralized A* increase significantly once we launch more than one thread.
+- The advantage that the Decentralized A* has on the Sequential A* in terms of elapsed time gets larger when we consider large graphs. With small graphs, the performance difference among the different A* versions are barely noticeable.
+- Since the program has been tested on a hardware with a 8 core CPU, the time performance decreases on average when `num_threads` becomes larger than 8.
+- Memory usage shows an interesting behavior: for small graphs, the higher the `num_threads` and the higher the memory usage, because the time needed for the actual A* execution is more or less the same (regardless of its version) and so the `num_threads` makes the difference (more threads means more overhead). For big graphs, instead, higher `num_threads` means less elapsed time because the multi-thread execution makes the A* to converge faster, which implies less time spent on execution, hence less memory used to find the best path.
+- As expected, with big graphs, the usage of a projection function in the AZHDA* approach gives better time performance with respect to the MHDA* and ZHDA* approaches, thanks to the combination of the advantages of both of the latter methods into the former one (see [Section 2.3.1](#231-decentralized-a-hashing-methods)).
+- As also discussed in [[1](#references)], the Centralized A* exhibits on average slower runtime performance than the Sequential A* because the concurrent access to the `open` list is a bottleneck of the former approach, while the time needed to expand a node is almost negligible, and this makes the scalability of the Centralized A* limited. On the contrary, if expanding a node would have been more expensive than accessing the `open` list, the Centralized A* would have probably be faster than Sequential A* because there would not be anymore the bottleneck due to the access to the `open` list.
 
 
-as also discussed in [5] (ovvero il paper di quer), …
-centr A* exhibits slower runtimes than seq A* because the concurrent access to the open list is the bottleneck, which makes the scalability of the centr A* limited. If expanding a node would have been a lot more expensive than what is now, centr A* would have probably be faster than seq A* because the access to the open list would have not been anymore the bottleneck.
-
-
-
-
-
+\
 # References
 
-$[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017.
+$[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017, pp. 7.
 
 $[2]$ “Algorithms for distributed termination detection”. Friedemann Mattern. 1987.
 
 $[3]$ 
-
-
-
-
-
-
-
-# TODO delete
-
-Each `Node` is characterized by an unique ID and two coordinates that define the node position.
-The links are represented by listing, for every node, all the nodes it is linked to. This is done with an unordered map `neighbor` with all the linked nodes as a key and the cost of the link as value.
-The node in `neighbor` is represented as an unsigned integer and represents the position of the corresponding node in the graph vector.
-
-
-Since the graph can have up to millions of nodes and therefore the graph size can become quite big, we decide to implement the graph generation (and loading) in a multithreaded way. 
-
-All the algorithms have at least 3 inputs that are the same:
-- The `graph` object that represent the graph in which we want to find the best path
-- The `start` and `end` nodes between which we want to find the path in the graph
-- The `best_path` object where the solution will be stored.
-
-The `best_path` object contains:
-- an unordered map that has nodes as keys and values and it stores the path in order from start to end
-- the total cost of the found path
-- the number of nodes contained in the path
-
-Since the open list needs fast insertion and fast removal of the lower cost node, we chose the priority queue because the nodes are always ordered by g (and f in case g is the same). Because the std implementation of priority queues doesn't allow the edit of nodes already inserted, nodes inside the queue can be duplicated (but with different costs). The node with lower cost is always picked up first and any other duplicate will be discarded when it's their turn to be removed from the open list.
-
-
-h_cost is computed with the Euclidean norm, so that the heuristic is admissible (...) and consistent (...) and so we are sure that in sequential case the first solution is the optimal one (anything else???)
-
-
-- `cost`: is an unordered map having as key a node and as value an integer representing the current best cost to arrive at the specified node. We chose to use an unordered map as the algorithm only requirement is a data structure that is easy to loop through.
-
-
-The sequential algorithm code is pretty simple. As a first step, we add the start node to the open list and then we do in while loop (until the open set is not empty) the following steps:
-- We get the top node from the open list and check if we already visited it and therefore needs to be discarded
-- If the node is the last of the path, we reconstruct the path and the algorithm ends
-- We loop through the neighbors and, if they are not present in the cost map or the current cost is less than the map cost, we add it to the cost, from and open data structures.
-
-If we exit the while loop because the open list is empty but no solution has been found, it means that the `start` and `end` nodes are not connected.
-
-
-The work is split evenly between threads thanks to the use of a deterministic hash function. When a thread visits a new node and explores its neighbors, it calculates the hash of each of them and sends them to the respective thread.
-Since the hash is deterministic, the same node will always be sent to the same thread.
-
-ansynch communication among threads to avoid wasting time
-
-Second, unlike the sequential algorithm, in this case finding a path from start to end does not guarantee it is the shortest. For this reason, we have to continue to open new nodes until either we don't have any nodes left in the open list or the cost of the opened nodes exceeds the cost of the current best path.
-Those conditions must be true for all the threads at the same time. For this reason, there is the need of an algorithm for threads to collectively decide when the computation is finished and the best path has been found.
-In the case of the centralized A*, the termination algorithm is very simple. It uses a shared vector of bool `end` of N elements where N is the number of threads. When all conditions are met, a thread sets `end[thread_id]` to true and to false otherwise. When all elements in `end` are true, the algorithm terminates and all threads exit.
-
 
