@@ -390,7 +390,7 @@ Considering the high `num_nodes` that the program could potentially have to hand
 
 
 
-### 2.3.4 Decentralized A* termination detection
+### 2.3.5 Decentralized A* termination detection
 As for the Centralized A*, the assumption of the first found solution being the globally optimal one that relies on an admissible and consistent heuristic for computing `h_cost` does _not_ stand anymore in case of multi-thread execution.
 For this reason, there is the need to implement a multithreaded A* termination detection algorithm. Looking at the literature, it has been decided to implement a slightly modified version of the _Vector counters algorithm_, whose main idea is described below:
 
@@ -473,7 +473,7 @@ _**Highlighted testing choices**_:
 |           1           |                     | 0.012405 / 4.79219 | 0.17472 / 14.0825 | 1.61875 / 90.6016 | 28.1928 / 1036.73 | 161.805 / 4515.04 |
 
 \
-**Centralized A\***
+### 3.2.4 Centralized A*
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
 | **Number of threads** |                     |                    |                    |                   |                   |                   |
@@ -484,7 +484,7 @@ _**Highlighted testing choices**_:
 |           16          |                     | 0.016523 / 5.10938 | 0.224758 / 14.5781 | 2.23012 / 92.1602 |  36.8672 / 1039.7 | 218.129 / 4846.71 |
 
 \
-### 3.2.4 Decentralized A* (MHDA*)
+### 3.2.5 Decentralized A* (MHDA*)
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
 | **Number of threads** |                     |                    |                    |                   |                   |                   |
@@ -495,7 +495,7 @@ _**Highlighted testing choices**_:
 |           16          |                     | 0.013199 / 5.28906 | 0.137609 / 14.9609 | 1.13545 / 93.0442 | 21.7814 / 1040.16 | 119.531 / 4731.64 |
 
 \
-### 3.2.5 Decentralized A* (ZHDA*)
+### 3.2.6 Decentralized A* (ZHDA*)
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
 | **Number of threads** |                     |                    |                    |                    |                   |                   |
@@ -506,7 +506,7 @@ _**Highlighted testing choices**_:
 |           16          |                     | 0.016504 / 5.69688 |  0.163986 / 15.168 |  1.15712 / 92.9297 |  19.585 / 1040.96 | 113.789 / 4616.35 |
 
 \
-### 3.2.6 Decentralized A* (AZHDA*)
+### 3.2.7 Decentralized A* (AZHDA*)
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
 | **Number of threads** |                     |                    |                    |                    |                   |                   |
@@ -518,7 +518,7 @@ _**Highlighted testing choices**_:
 
 
 \
-### 3.2.7 Elapsed time and memory usage plots
+### 3.2.8 Elapsed time and memory usage plots
 ![plot01_10](./doc_images/01_10.png "")
 ![plot02_11](./doc_images/02_11.png "")
 ![plot03_12](./doc_images/03_12.png "")
