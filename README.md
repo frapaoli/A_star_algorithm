@@ -5,7 +5,7 @@ Paoli Leonardi Francesco (s297078), Pasqualini Federico (s296488)
 \
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
-\
+
 
 # 1. Graph data structures and algorithms design
 
@@ -19,7 +19,7 @@ For a better understanding of the documentation, the main notations used to desc
 - `f_cost` of a node: `g_cost` + `h_cost` of that node.
 - `num_nodes`: number of graph nodes
 - `num_threads`: number of threads that are running concurrently.
-\
+
 
 ## 1.1 Graph data structures
 
@@ -46,7 +46,7 @@ where:
 _**Highlighted implementation choices**_:
 - `neighbor` is a pointer to a `std::unordered_map` and not a `std::unordered_map` itself because we wanted each `Node` object to be of constant size.
 - Each `Node` has been provided with full copy control features (i.e., constructor, copy/move constructor, copy/move assignment, destructor), overloaded operators and attributes getters/setters, which have been implemented in `graph_gen_store_load.cpp/.h` files.
-\
+
 
 ## 1.2 Graph generation and storage
 The first task was to implement a graph generation algorithm in order to generate a graph (having up to millions of nodes and links) and to store it in a file, from which it can then be retrieved whenever needed.
