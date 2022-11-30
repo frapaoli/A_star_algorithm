@@ -37,7 +37,7 @@ class Node {
 ```
 where:
 - `id` is the unique identifier of each node on the graph.
-- `x` and `y` are the coordinates of the node on the 2D grid onto which the graph is built.
+- `x` and `y` are the coordinates of the node on the 2D grid on which the graph is built.
 - `neighbor` is a pointer to a `std::unordered_map` structure containing a set of key-value pairs representing the `id` of the nodes to which the `neighbor` structure owner is connected and the cost of the corresponding links, respectively.
 
 _**Highlighted implementation choices**_:
