@@ -5,8 +5,8 @@ Paoli Leonardi Francesco (s297078), Pasqualini Federico (s296488)
 \
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
-
 \
+
 # 1. Graph data structures and algorithms design
 
 For a better understanding of the documentation, the main notations used to describe the algorithm design procedure have been reported below:
@@ -19,8 +19,8 @@ For a better understanding of the documentation, the main notations used to desc
 - `f_cost` of a node: `g_cost` + `h_cost` of that node.
 - `num_nodes`: number of graph nodes
 - `num_threads`: number of threads that are running concurrently.
-
 \
+
 ## 1.1 Graph data structures
 
 The first implementation choice was to represent a graph as a `std::vector` structure of `Node` objects, whose main features are reported below:
@@ -46,14 +46,14 @@ where:
 _**Highlighted implementation choices**_:
 - `neighbor` is a pointer to a `std::unordered_map` and not a `std::unordered_map` itself because we wanted each `Node` object to be of constant size.
 - Each `Node` has been provided with full copy control features (i.e., constructor, copy/move constructor, copy/move assignment, destructor), overloaded operators and attributes getters/setters, which have been implemented in `graph_gen_store_load.cpp/.h` files.
-
 \
+
 ## 1.2 Graph generation and storage
 The first task was to implement a graph generation algorithm in order to generate a graph (having up to millions of nodes and links) and to store it in a file, from which it can then be retrieved whenever needed.
 Considering the potentially huge size of the graph, it has been decided to implement the algorithm in a parallel way, so that it could be executed both in single-thread and multi-thread.
 Through the user interface provided by `menu.cpp/.h` files, the user can choose to run the program in order to generate a random graph of a given size (i.e., number of nodes), as well as the number of threads that should concurrently generate the graph’s nodes and links and store them in a long-term memory file.
 
-\
+
 ### 1.2.1 Details about the graph generation procedure
 The function `graph_generation` called by the main thread initializes all the data structures and synchronization primitives needed for the graph generation and then, for each thread that has to run concurrently, an instance of the function `nodes_links_generation` gets launched in order to generate the graph in parallel. Both above mentioned functions are in `graph_gen_store_load.cpp/.h`.
 
@@ -65,7 +65,7 @@ For efficient threads synchronization, the following primitives have been employ
 _**Highlighted implementation choices**_:
 - To let threads lock graph partitions, `std::atomic_flag` structures were employed instead of `std::mutex` because, when a certain partition gets locked and “processed” by a thread, the same partition doesn’t need to be processed by any other thread, hence the `std::atomic_flag::test_and_set` method was used for this purpose. The same could be done by `std::mutex::try_lock` method that, however, according to the C++ reference documentation (https://en.cppreference.com/w/cpp/thread/mutex/try_lock) is allowed to fail spuriously: _\<\<This function is allowed to fail spuriously and return false even if the mutex is not currently locked by any other thread.\>\>_.
 
-\
+
 ### 1.2.2 Nodes generation
 At the beginning of nodes generation, the graph `x`-`y` coordinate space gets evenly divided in a certain number of partitions such that it becomes a 2D square grid where each grid cell is a graph partition having certain `x`-`y` bounds. The number of created partitions is proportional to `num_nodes` and gets computed by the `optimal_graph_axes_partit_size` function in `utilities.cpp/.h` files.
 
@@ -76,7 +76,7 @@ _**Highlighted implementation choices**_:
 - Excluding cases in which `num_threads` is greater than `num_nodes` (which is very unusual), the number of graph partitions is sufficiently greater than `num_threads` so that faster threads can lock multiple partitions and slower threads don’t become the bottleneck, but it is also not too big in order to avoid excessively increasing the overhead due to threads parallelism.
 
 
-\
+
 ### 1.2.3 Links generation
 
 Each thread waits on a barrier for all the others to finish the nodes generation and, when all threads are done, they go through all the graph partitions a second time in order to generate the links of the nodes belonging to each partition.
@@ -90,7 +90,7 @@ _**Highlighted implementation choices**_:
 - It has been chosen to generate at least one incoming link and one outgoing link for every node, so that the resulting graph is strongly connected. Therefore, the proposed graph generation algorithm creates graphs for which there always exists a path between every `start` and `stop` node couple.
 
 
-\
+
 ### 1.2.4 How the graph gets stored in long-term memory
 
 When all threads are done with the links generation as well (which is guaranteed by a barrier), the graph data structure can be serialized (i.e., stored) into the file specified by the user through the terminal command window. The graph serialization gets performed in binary format through the `write` system call, so that the graph structure occupies less bytes in the disk.
@@ -118,14 +118,14 @@ _**Highlighted implementation choices**_:
 
 
 
-\
+
 ## 1.3 Graph loading
 Once the algorithm for generating the graph and storing it in a file has been completed, it was necessary to implement a second algorithm that, given the name of a file storing a graph in the long-term memory, is able to rebuild it from the information stored in the file and to load it in the memory of the running program, so that A* could be executed on it.
 As for the graph generation, considering the potentially huge size of the graph, it has been decided to implement the graph loading algorithm in a parallel way, so that it could be executed both in single-thread and multi-thread.
 Through the user interface provided by `menu.cpp/.h` files, the user can choose to run the program in order to load a graph from a file by specifying the number of threads that should concurrently read the graph’s nodes and links from the files. During this process, the user gets also asked about which A* algorithm versions should be run on the graph after it gets successfully read (more details on this later).
 
 
-\
+
 ### 1.3.1 Details about the graph loading procedure
 The function `graph_read_from_file` called by the main thread initializes all the data structures and synchronization primitives needed for the graph loading and then, for each thread that has to run concurrently, an instance of the function `nodes_links_read_from_file` gets launched in order to read the graph in parallel. Both above mentioned functions are in `graph_gen_store_load.cpp/.h`.
 
@@ -143,7 +143,7 @@ As for the graph generation, each of the above steps of the graph loading gets p
 Once this procedure has been carried out successfully, the graph will be found in a `std::vector<Node>` that is ready to be used by the A* algorithm.
 
 
-\
+
 # 2. A* data structures and algorithms design
 Considering the state-of-the-art approaches for A* carried out in the literature of path search algorithms, it has been decided to implement 3 different versions of the A* algorithm, of which one is single-thread and the other two allow multi-thread execution:
 - `Sequential A*` that is the classical A* algorithm running on a single thread.
@@ -155,11 +155,11 @@ Through the user interface provided by `menu.cpp/.h` files, the user can choose 
 Details about each one of the above mentioned versions can be seen in the `a_star.cpp/.h` files and are presented in following sections.
 
 
-\
+
 ## 2.1 Sequential A*
 The Sequential A*, as the name suggests, runs on a single thread in a sequential way, so that graph nodes are explored one at a time until the best path (i.e., the path with the least cost) between `start` and `stop` nodes is found.
 
-\
+
 ### 2.1.1 Sequential A* data structures
 The following is a list of the main data structures exploited by the Sequential A* in order to carry out a correct algorithm execution:
 - `graph`: a `std::vector<Node>` instance that represents the graph on which we want to run the A*.
@@ -196,7 +196,7 @@ _**Highlighted implementation choices**_:
 - For the `closed`, `from` and `cost` structures we chose the `std::unordered_map` data type because we wanted constant computational complexity to perform random access on them.
 
 
-\
+
 ### 2.1.2 Details about the Sequential A* implementation
 The sequential implementation of A* is straightforward: starting from the user specified `start` node, a single thread progressively expands all the lowest cost neighbors of the already visited nodes, until the `stop` node is eventually found.
 
@@ -209,20 +209,20 @@ The main algorithm steps are described below:
 
 
 
-\
+
 ## 2.2 Centralized A*
 
 The Centralized A* is the most intuitive attempt to parallelize the Sequential A*. It relies on common data structures that are shared among all running threads, exploited by them in order to concurrently search for the lowest cost path between `start` and `stop` nodes.
 
 
-\
+
 ### 2.2.1 Centralized A* data structures
 Other than the ones used by the Sequential A*, the Centralized A* version exploits the following main data structures:
 - `end`: a `std::vector<int>` instance used to determine whether the algorithm must terminate or continue (more details on this later).
 - `m0`, `m1` and `m2`: locks used in order to synchronize the threads' access to the shared data structures.
 
 
-\
+
 ### 2.2.2 Details about the Centralized A* implementation
 The Centralized A* runs multiple threads that progressively update their centralized knowledge of the graph by expanding all the lowest cost neighbors of the already visited nodes, until the `stop` node is eventually found.
 
@@ -235,7 +235,7 @@ The main algorithm steps are very similar to the ones of the Sequential A* (see 
 
 
 
-\
+
 ### 2.2.3 Centralized A* termination detection
 Threads will continue to try to find a new best path solution until either they don't have any nodes left in the `open` list or the cost of all the nodes that can be expanded exceeds the cost of the current best path, in which cases the algorithm must terminate.
 
@@ -249,7 +249,7 @@ _**Highlighted implementation choices**_:
 
 
 
-\
+
 ## 2.3 Decentralized A*
 
 The Decentralized A* is a parallel implementation of the algorithm that aims at being more efficient and less time-consuming than the Centralized A* version by removing the overhead due to the locks and to the usage of common data structures shared among all threads.
@@ -264,7 +264,7 @@ _**Highlighted implementation choices**_:
 - The option of assigning the ownership of a node to a thread by using a random generator of nodes `id` was discarded in the first place because, in order to properly carry out a decentralized execution of the A*, it is needed that each node that we hash always returns the `id` of the same node in a deterministic way (i.e., each node must be owned by only one thread).
 
 
-\
+
 ### 2.3.1 Decentralized A* hashing methods
 Looking at the literature, it has been decided to implement 3 different hashing methods to be used by the HDA* where each one focuses on improving a specific feature of the hashing task, so that they could be compared with each other.
 
@@ -295,7 +295,7 @@ _**Considerations about the proposed hashing methods**_:
 3. The AZHDA* tries to combine the advantages of both MHDA* and ZHDA*, employing the projection function $A$ in order to keep the workload balanced while reducing as much as possible the overhead due to threads exchange of information about graph nodes. The details about the implementation of the projection function $A$ can be seen in the `a_star.cpp/.h` files.
 
 
-\
+
 ### 2.3.2 Decentralized A* data structures
 Other than the ones used by the Sequential A*, the Decentralized A* version exploits the following main data structures:
 - `stop_node_owner`: identifier of the thread that is the owner of the `stop` node.
@@ -343,7 +343,7 @@ _**Highlighted implementation choices**_:
 - `algorithm_terminated` and `termination_starter_thread` have been chosen to be instances of `std::atomic` because it guarantees that they get read/modified in mutual exclusion without the need of dedicated synchronization primitives.
 
 
-\
+
 ### 2.3.3 Details about the Decentralized A* implementation
 The main idea of the Decentralized A* is to let each thread run the algorithm independently of the other threads, each one storing information about the explored graph region in its own local data structures that, since are _not_ shared among all threads, can be accessed without the need of any synchronization primitive. Since each node has only one owner thread, all threads explore different regions of the graph and, when a new explorable node gets discovered, a message gets sent to its owner in order to notify it about the existence of that node.
 Once the `stop` node gets reached, a series of additional messages get exchanged in order to rebuild the path going backward from `stop` to `start` (more details on this later).
@@ -362,7 +362,7 @@ _**Highlighted implementation choices**_:
 - In case the random-bit-strings table $R$ gets filled up in parallel by multiple threads, it gets evenly divided in a number of partitions that is greater than `num_threads`, which allows faster threads to fill up more $R$ partitions than slower ones, so that the slower thread doesn’t become the bottleneck. This statement doesn’t hold only for graphs where `num_nodes` $<$ `num_threads`, which is very seldom to be found.
 
 
-\
+
 ### 2.3.4 Decentralized A* path rebuild
 Since the graph knowledge is distributed among all the threads, rebuilding the path from `start` to `stop` nodes requires in general the intervention of all threads that are the owners of at least one node belonging to the found path, so that they can send the information about those nodes to the thread that is trying to rebuild the path. In particular, for each `Node` instance $A$ belonging to the path we need to know who is its parent, i.e., from which `Node` $B$ the `Node` $A$ comes by following the path from `start` to `stop`.
 
@@ -389,7 +389,7 @@ Considering the high `num_nodes` that the program could potentially have to hand
 
 
 
-\
+
 ### 2.3.4 Decentralized A* termination detection
 As for the Centralized A*, the assumption of the first found solution being the globally optimal one that relies on an admissible and consistent heuristic for computing `h_cost` does _not_ stand anymore in case of multi-thread execution.
 For this reason, there is the need to implement a multithreaded A* termination detection algorithm. Looking at the literature, it has been decided to implement a slightly modified version of the _Vector counters algorithm_, whose main idea is described below:
@@ -406,11 +406,11 @@ _**Highlighted implementation choices**_:
 
 
 
-\
+
 # 3. Experimental performance evaluation
 After having implemented all previously discussed algorithms, we conducted a series of practical experiments to evaluate the efficiency and effectiveness of the proposed solutions by recording measures of the elapsed time and the memory usage for each one of them.
 
-\
+
 ## 3.1 Measurement of elapsed time and memory usage
 Time measurements were taken by exploiting the `std::chrono::steady_clock::now` method in order to sample the time instants immediately before/after the beginning/termination of each algorithm.
 
@@ -424,7 +424,7 @@ watch -n 0.5 free -m
 Both the above mentioned methods for memory usage tracking showed coherent results and are perfectly fine.
 
 
-\
+
 ## 3.2 Performance evaluation
 This section reports some tables and figures to evaluate the performance (in terms of both elapsed time and memory usage) of the following implemented algorithms:
 - Graph generation and storage
