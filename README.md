@@ -266,7 +266,7 @@ _**Highlighted implementation choices**_:
 
 
 ### 2.3.1 Decentralized A* hashing methods
-Looking at the literature, it has been decided to implement 3 different hashing methods to be used by the HDA* where each one focuses on improving a specific feature of the hashing task, so that they could be compared with each other.
+Looking at the literature [[1](#references)], it has been decided to implement 3 different hashing methods to be used by the HDA* where each one focuses on improving a specific feature of the hashing task, so that they could be compared with each other.
 
 The 3 hashing methods are described below:
 1. Multiplicative hash (_MHDA*_): given a `Node`, the `id` of its owner gets computed by:
