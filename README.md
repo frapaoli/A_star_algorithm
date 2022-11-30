@@ -549,4 +549,3 @@ $[2]$ “Algorithms for distributed termination detection”. Friedemann Mattern
 
 $[3]$ 
 
-
