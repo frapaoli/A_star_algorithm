@@ -239,8 +239,8 @@ The main algorithm steps are very similar to the ones of the Sequential A* (see 
 ### 2.2.3 Centralized A* termination detection
 Threads will continue to try to find a new best path solution until either they don't have any nodes left in the `open` list or the cost of all the nodes that can be expanded exceeds the cost of the current best path, in which cases the algorithm must terminate.
 
-In order to properly detect such conditions we employed an `end` vector that, for each thread, stores a 0 or 1 if the above conditions are both met for that thread or not.
-Every time that the $i$-th thread recognizes that the those conditions are both satisfied it sets `end[i]` to 0 and checks the values of all other `end` entries: if all entries are equal to 0 then the algorithm terminates, otherwise `end[i]` gets set back to 1 and the $i$-th thread continues.
+In order to properly detect such conditions we employed an `end` vector that, for each thread, stores a 0 or 1 if the above conditions are both met for that thread or not, respectively.
+Every time that the $i$-th thread recognizes that those conditions are both satisfied it sets `end[i]` to 0 and checks the values of all other `end` entries: if all entries are equal to 0 then the algorithm terminates, otherwise `end[i]` gets set back to 1 and the $i$-th thread continues.
 
 
 _**Highlighted implementation choices**_:
