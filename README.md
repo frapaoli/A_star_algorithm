@@ -132,9 +132,9 @@ The function `graph_read_from_file` called by the main thread initializes all th
 For efficient threads synchronization, the same primitives already discussed in [Section 1.2.1](#121-details-about-the-graph-generation-procedure) have been employed.
 
 The deserialization of the graph information contained in the file is performed by following the same protocol used for the serialization of graph in file, whose details are described in [Section 1.2.4](#124-how-the-graph-gets-stored-in-long-term-memory). In particular:
-1. The main thread reads the information regarding the number of nodes and links at the beginning of the file.
-2. All threads concurrently go through every graph partition and, for each of them, read from the file the information regarding each node of that partition.
-3. Same as step 2., but now threads read from the file the information regarding the links of each node of graph partitions.
+1. The main thread reads the information related to the number of nodes and links at the beginning of the file.
+2. All threads concurrently go through every graph partition and, for each of them, read from the file the information related to each node of that partition.
+3. Same as step 2., but now threads read from the file the information related to the links of each node of graph partitions.
 
 As for the graph generation, each of the above steps of the graph loading gets performed by:
 - locking through the `fcntl` system call the file regions that are currently being read by a thread.
