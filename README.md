@@ -261,7 +261,7 @@ In particular, the proposed algorithm implements the Hash Distributed A* (HDA*),
 **NOTE**: from now on we will refer to a thread as the _owner_ of a node if the chosen hash function applied to that node returns the `id` of that thread. This means that the hashed thread is responsible for (eventually) expanding that node.
 
 _**Highlighted implementation choices**_:
-- The option of assigning the ownership of a node to a thread by using a random generator of nodes `id` was discarded in the first place because, in order to properly carry out a decentralized execution of the A*, it is needed that each node that we hash always returns the `id` of the same node in a deterministic way (i.e., each node must be owned by only one thread).
+- The option of assigning the ownership of a node to a thread by using a random generator of threads `id` was discarded in the first place because, in order to properly carry out a decentralized execution of the A*, it is needed that each node that we hash always returns the `id` of the same thread in a deterministic way (i.e., each node must be owned by only one thread).
 
 
 
