@@ -442,7 +442,7 @@ _**Highlighted testing choices**_:
 
 
 
-\
+
 ### 3.2.1 Graph generation and storage
 
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
@@ -454,7 +454,7 @@ _**Highlighted testing choices**_:
 |           8           |                     | 0.032334 / 4.44922 | 0.233928 / 7.76406 | 2.27942 / 40.0156 | 30.2161 / 358.102 | 199.074 / 1814.55 |
 |           16          |                     | 0.035214 / 4.64062 | 0.239406 / 7.80078 | 2.29094 / 40.0352 | 30.7495 / 357.441 | 200.449 / 1813.41 |
 
-\
+
 ### 3.2.2 Graph loading
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
@@ -465,14 +465,14 @@ _**Highlighted testing choices**_:
 |           8           |                     | 0.026901 / 4.13281 | 0.106061 / 6.83594 | 1.04317 / 33.8242 |  10.2839 / 302.82 | 54.3539 / 1543.16 |
 |           16          |                     | 0.027909 / 4.21875 | 0.108464 / 6.96484 | 1.05605 / 34.0273 | 10.3098 / 302.977 | 54.4023 / 1543.35 |
 
-\
+
 ### 3.2.3 Sequential A*
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |        10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|
 | **Number of threads** |                     |                    |                   |                   |                   |                   |
 |           1           |                     | 0.012405 / 4.79219 | 0.17472 / 14.0825 | 1.61875 / 90.6016 | 28.1928 / 1036.73 | 161.805 / 4515.04 |
 
-\
+
 ### 3.2.4 Centralized A*
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
@@ -483,7 +483,7 @@ _**Highlighted testing choices**_:
 |           8           |                     | 0.016471 / 4.86328 | 0.221772 / 14.4141 |  2.01158 / 92.082 | 36.5557 / 1039.66 | 213.676 / 4846.53 |
 |           16          |                     | 0.016523 / 5.10938 | 0.224758 / 14.5781 | 2.23012 / 92.1602 |  36.8672 / 1039.7 | 218.129 / 4846.71 |
 
-\
+
 ### 3.2.5 Decentralized A* (MHDA*)
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
@@ -494,7 +494,7 @@ _**Highlighted testing choices**_:
 |           8           |                     |  0.012449 / 5.125  | 0.119541 / 14.6562 | 0.941376 / 92.593 | 20.1785 / 1040.21 | 114.834 / 4663.49 |
 |           16          |                     | 0.013199 / 5.28906 | 0.137609 / 14.9609 | 1.13545 / 93.0442 | 21.7814 / 1040.16 | 119.531 / 4731.64 |
 
-\
+
 ### 3.2.6 Decentralized A* (ZHDA*)
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
@@ -505,7 +505,7 @@ _**Highlighted testing choices**_:
 |           8           |                     |  0.015492 / 5.4375 | 0.120467 / 14.6953 | 0.981628 / 92.7203 | 18.5199 / 1040.72 |  109.693 / 4589.4 |
 |           16          |                     | 0.016504 / 5.69688 |  0.163986 / 15.168 |  1.15712 / 92.9297 |  19.585 / 1040.96 | 113.789 / 4616.35 |
 
-\
+
 ### 3.2.7 Decentralized A* (AZHDA*)
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K        |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|
@@ -517,7 +517,7 @@ _**Highlighted testing choices**_:
 |           16          |                     | 0.017125 / 5.71443 | 0.156789 / 14.8867 |  1.1077 / 93.0781  | 16.1493 / 1041.07 |  99.955 / 4685.43 |
 
 
-\
+
 ### 3.2.8 Elapsed time and memory usage plots
 ![plot01_10](./doc_images/01_10.png "")
 ![plot02_11](./doc_images/02_11.png "")
@@ -540,7 +540,7 @@ _**Interpretation of the observed performance**_:
 - As also discussed in [[1](#references)], the Centralized A* exhibits on average slower runtime performance than the Sequential A* because the concurrent access to the `open` list is a bottleneck of the former approach, while the time needed to expand a node is almost negligible, and this makes the scalability of the Centralized A* limited. On the contrary, if expanding a node would have been more expensive than accessing the `open` list, the Centralized A* would have probably be faster than Sequential A* because there would not be anymore the bottleneck due to the access to the `open` list.
 
 
-\
+
 # References
 
 $[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017.
