@@ -11,7 +11,7 @@ For a better understanding of the documentation, the main notations used to desc
 - `graph`: set of nodes connected between them by directed, weighted links.
 - `Node`: data structure representing the graph nodes (more details on this later).
 - `start` and `stop`: source and destination nodes of the A*, respectively.
-- `neighbors` of a node: nodes to which it is connected through a directed, weighted link.
+- `neighbors` of a node: nodes to which the latter is connected through directed, weighted links.
 - `g_cost` of a node: cumulative cost (i.e., weight) of all the links that have to be traversed from `start` in order to arrive at that node.
 - `h_cost` of a node: estimation of the cost of the links that must be traversed from that node to arrive at `stop`, which is computed by an heuristic (more details on this later).
 - `f_cost` of a node: `g_cost` + `h_cost` of that node.
