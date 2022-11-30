@@ -96,16 +96,16 @@ _**Highlighted implementation choices**_:
 When all threads are done with the links generation as well (which is guaranteed by a barrier), the graph data structure can be serialized (i.e., stored) into the file specified by the user through the terminal command window. The graph serialization gets performed in binary format through the `write` system call, so that the graph structure occupies less bytes in the disk.
 
 The main steps of the graph storing algorithm are the following:
-1. One thread stores at the beginning of the file the information regarding nodes and links, which are:
+1. One thread stores at the beginning of the file the information about nodes and links, which are:
 * 4 bytes `unsigned int` for the number of generated nodes.
 * 4 bytes `unsigned int` for the number of generated links.
 * 4 bytes `unsigned int` for the number of graph partitions.
 * For each graph partition, 4 bytes `unsigned int` for the number of links that start from that partition.
-2. Threads concurrently go through every graph partition and, for each of them, store in the file the information regarding each node of that partition, which are:
+2. Threads concurrently go through every graph partition and, for each of them, store in the file the information about each node of that partition, which are:
 * 4 bytes `unsigned int` for the node `id`.
 * 4 bytes `int` for the node `x` coordinate.
 * 4 bytes `int` for the node `y` coordinate.
-3. Same as step 2., but now threads store in the file the information regarding the links of each node of graph partitions, which are:
+3. Same as step 2., but now threads store in the file the information about the links of each node of graph partitions, which are:
 * 4 bytes `unsigned int` for the `id` of the node from which the link starts.
 * 4 bytes `unsigned int` for the `id` of the node in which the link ends.
 * 4 bytes `unsigned int` for the link’s weight.
