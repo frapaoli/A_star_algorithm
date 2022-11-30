@@ -2,6 +2,8 @@
 
 \
 <center>Graph generation and storage</center>
+<p style="text-align: center;">Graph generation and storage</p>
+
 
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
