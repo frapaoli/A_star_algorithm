@@ -1,13 +1,5 @@
 # A* algorithm project
 
-- Graph generation and storage
-- Graph loading
-- Sequential A*
-- Centralized A*
-- Decentralized A* (MHDA*)
-- Decentralized A* (ZHDA*)
-- Decentralized A* (AZHDA*)
-
 Graph generation and storage
 |    _(seconds / MB)_   | **Number of nodes** |         1K         |         10K        |        100K       |         1M        |         5M        |
 |:---------------------:|:-------------------:|:------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|
@@ -28,7 +20,16 @@ Graph loading
 |           8           |                     | 0.026901 / 4.13281 | 0.106061 / 6.83594 | 1.04317 / 33.8242 |  10.2839 / 302.82 | 54.3539 / 1543.16 |
 |           16          |                     | 0.027909 / 4.21875 | 0.108464 / 6.96484 | 1.05605 / 34.0273 | 10.3098 / 302.977 | 54.4023 / 1543.35 |
 
+Sequential A*
+|    _(seconds / MB)_   | **Number of nodes** |         1K         |        10K        |        100K       |         1M        |         5M        |
+|:---------------------:|:-------------------:|:------------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|
+| **Number of threads** |                     |                    |                   |                   |                   |                   |
+|           1           |                     | 0.012405 / 4.79219 | 0.17472 / 14.0825 | 1.61875 / 90.6016 | 28.1928 / 1036.73 | 161.805 / 4515.04 |
 
+Centralized A*
+Decentralized A* (MHDA*)
+Decentralized A* (ZHDA*)
+Decentralized A* (AZHDA*)
 
 ![plot01_10](./doc_images/01_10.png "")
 ![plot02_11](./doc_images/02_11.png "")
