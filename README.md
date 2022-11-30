@@ -9,8 +9,15 @@
 |           8           |                     |    |     |      |    |    |
 |           16          |                     |    |     |      |    |    |
 
-![plot01](./doc_images/01.png "AAA")
-![plot01_02](./doc_images/01_02.png "AAA")
+![plot01_10](./doc_images/01_10.png "")
+![plot02_11](./doc_images/02_11.png "")
+![plot03_12](./doc_images/03_12.png "")
+![plot04_13](./doc_images/04_13.png "")
+![plot05_14](./doc_images/05_14.png "")
+![plot06_15](./doc_images/06_15.png "")
+![plot07_16](./doc_images/07_16.png "")
+![plot08_17](./doc_images/08_17.png "")
+![plot09_18](./doc_images/09_18.png "")
 
 A* is a path search algorithm for finding the optimal-cost path that connects any `start` node to any `stop` node of a directed, weighted graph (if such path exists).
 The following documentation aims to guide the user through the C/C++ implementation of single-thread and multi-thread versions of A* algorithm, highlighting the main design choices that have been made and the experimental results that have been achieved.
