@@ -390,7 +390,7 @@ _**Analysis of above mentioned methods for path rebuild**_:
 Considering the high `num_nodes` that the program could potentially have to handle on a highly parallel hardware, it has been chosen to implement the approach 2. because it implies a lower estimated number of messages in best, average and worst case scenarios with respect to the approach 1.
 
 
-**NODE**: in general, it is guaranteed that the thread that wants to rebuild the path knows at least the parent of `stop`, since the latter is owned by that thread.
+**NOTE**: in general, it is guaranteed that the thread that wants to rebuild the path knows at least the parent of `stop`, since the latter is owned by that thread.
 
 
 
