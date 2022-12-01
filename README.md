@@ -310,7 +310,8 @@ std::vector<ptr_to_atomic_flag> threads_synch;
 ```
 - `msg_buffer_v`: a `std::vector<msg_buffer_t>` instance that represents the vector containing the local message buffers of all running threads, where each message gets sent from a thread to another in order to share the information about a new possible node to be expanded, together with its `g_cost` and its parent node. The structure of a single message and of a message buffer is reported below:
 ```c++
-// message exchanged between threads in multi-threaded Decentralized A* algorithm (the tuple contains node N, cost g(N) and parent(N))
+/* message exchanged between threads in multi-threaded Decentralized A* algorithm (the tuple contains node N,
+cost g(N) and parent(N)) */
 typedef std::tuple<Node, double, Node> msg_t;
 
 // buffer of messages
@@ -318,17 +319,21 @@ typedef std::queue<msg_t> msg_buffer_t;
 ```
 - `parent_request_buffer`: a `std::vector<parent_request_t>` instance that is the buffer of the below data structure instances, which represent the request of a thread to know the parent of a certain `Node`:
 ```c++
-/* parent request message (key-value are, respectively, the node of which it is requested to know the parent and the flag that represents if a new parent request arrived or not) */
+/* parent request message (key-value are, respectively, the node of which it is requested to know the parent and
+the flag that represents if a new parent request arrived or not) */
 typedef std::pair<Node, bool> parent_request_t;
 ```
 - `parent_reply_t`: answer provided by a thread to another one in order to reply to a previous parent request. The reply message structure is shown below:
 ```c++
-/* parent reply message (key-value are, respectively, the requested parent node and the flag that represents if a new parent reply is available or not) */
+/* parent reply message (key-value are, respectively, the requested parent node and the flag that represents
+if a new parent reply is available or not) */
 typedef std::pair<Node, bool> parent_reply_t;
 ```
 - `acc_msg_counter`: instance of the data structure reported below, which contains the cumulative counters of exchanged messages for each single thread:
 ```c++
-/* cumulative counter of sent and received messages for each thread. The first value of std::pair is the vector containing the counter associated with each running thread, while the second value of std::pair represents the ID of the thread that now has to check the cumulative counter. */
+/* cumulative counter of sent and received messages for each thread. The first value of std::pair is the vector
+containing the counter associated with each running thread, while the second value of std::pair represents
+the ID of the thread that now has to check the cumulative counter. */
 typedef std::pair<std::vector<int>, std::atomic<unsigned int>> acc_msg_counter_t;
 ```
 - `algorithm_terminated`: a `std::atomic<bool>` flag that gets set by the thread that is the first to detect that the Decentralized A* termination conditions are fulfilled.
