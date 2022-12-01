@@ -442,7 +442,7 @@ This section reports some tables and figures to evaluate the performance (in ter
 
 _**Highlighted testing choices**_:
 - The experiments have been conducted by considering different graph sizes (up to 5 millions of nodes) and different number of threads (up to 16). Running the algorithms on graphs with 10 millions of nodes or more showed to be very time expensive and the elapsed time is highly variable depending on the `start` and `stop` distance on the graph, so we decided to limit our tests to 5 millions of nodes. Moreover, the tests have been conducted on a hardware with a 8 core CPU, so we considered it meaningless to run more than 16 threads in parallel (we tried with 16 threads to see what happens when the number of threads is greater than the actual available CPU cores).
-- Since the execution time is highly depended on the `start` and `stop` nodes relative position on the graph, the A* versions have all been run by choosing `start` and `stop` indexes equal to $0$ and $\frac{`num_nodes`}{2}$, respectively, so that the tests could simulate an average complexity case.
+- Since the execution time is highly depended on the `start` and `stop` nodes relative position on the graph, the A* versions have all been run by choosing `start` and `stop` indexes equal to $0$ and `num_nodes`$/2$, respectively, so that the tests could simulate an average complexity case.
 - Regarding the memory usage, we report the maximum number of megabytes (MB) of physical memory that process used simultaneously.
 
 
