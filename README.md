@@ -406,7 +406,7 @@ If the `acc_msg_counter` message manages to do a complete cycle through all thre
 
 _**Highlighted implementation choices**_:
 - The `acc_msg_counter` message doesn’t get sent from the $i$-th thread to the next one until the $i$-th entry of `acc_msg_counter` isn’t $\leq 0$, because it would mean that the $i$-th thread didn’t read all the messages it received so far. This detail allows us to save useless message passing.
-- We considered the implementation of other possible A* termination detection algorithms such as the _Four counter algorithm_, the _Time algorithm_ and the _Channel counting algorithm_. However, among the mentioned approaches, the _Vector counters algorithm_ seemed to be the best choice for its simplicity and for being a single wave detection algorithm.
+- We considered the implementation of other possible A* termination detection algorithms such as the _Four counter algorithm_, the _Time algorithm_ and the _Channel counting algorithm_, whose details are described in [[3](#references)]. However, among the mentioned approaches, the _Vector counters algorithm_ seemed to be the best choice for its simplicity and for being a single wave detection algorithm.
 
 
 
