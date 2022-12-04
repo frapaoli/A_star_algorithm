@@ -1,5 +1,5 @@
 # A* algorithm project
-Paoli Leonardi Francesco (s297078), Pasqualini Federico (s296488)
+Authors: Paoli Leonardi Francesco (s297078), Pasqualini Federico (s296488)
 
 
 \
