@@ -547,6 +547,13 @@ _**Interpretation of the observed performance**_:
 2. `NODE_EXPANSION_DELAY` is the additional delay (in milliseconds) that gets added to the time needed for expanding a graph's node.
 In the following we report the time/memory performance of each A* version with `TEST_HIGH_NODE_EXPANSION_COST` set to $1$ and `NODE_EXPANSION_DELAY` equal to $1$ millisecond, showing the actual potential of the Centralized approach in such cases with respect to the Sequential and Decentralized ones. Without any loss of generality, for the Decentralized A* version it has been only considered the Abstract Zobrist hashing method (i.e., AZHDA*).
 
+
+
+
+
+![plot19_20](./doc_images/19_20.png "")
+
+
 # References
 
 $[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihiro Kishimoto. August 18, 2017.
