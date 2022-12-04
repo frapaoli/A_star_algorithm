@@ -548,7 +548,14 @@ _**Interpretation of the observed performance**_:
 In the following we report the time/memory performance of each A* version on a graph with $10K$ nodes and with `TEST_HIGH_NODE_EXPANSION_COST` set to $1$ and `NODE_EXPANSION_DELAY` equal to $1$ millisecond, showing the actual potential of the Centralized approach in such cases with respect to the Sequential and Decentralized ones. Without any loss of generality, for the Decentralized A* version it has been only considered the Abstract Zobrist hashing method (i.e., AZHDA*). For the same reason discussed above, `start` and `stop` indexes were chosen to be still equal to $0$ and `num_nodes`$/2$, respectively.
 
 
-
+|    _(seconds / MB)_   | **A\* version** |  Sequential A*  |   Centralized A*   |       AZHDA*      |
+|:---------------------:|:---------------:|:---------------:|:------------------:|:-----------------:|
+| **Number of threads** |                 |                 |                    |                   |
+|           1           |                 | 9.0176 / 14.332 |  9.06419 / 14.2461 | 9.16077 / 13.8398 |
+|           2           |                 |                 |  4.52714 / 14.2797 | 6.07787 / 14.3273 |
+|           4           |                 |                 |  2.31766 / 14.293  | 3.26618 / 14.5281 |
+|           8           |                 |                 |  1.18234 / 14.5977 | 3.16618 / 15.0938 |
+|           16          |                 |                 | 0.694593 / 14.8438 | 1.78775 / 16.1016 |
 
 
 ![plot19_20](./doc_images/19_20.png "")
