@@ -568,4 +568,3 @@ $[1]$ “A Survey of Parallel A*”. Alex Fukunaga, Adi Botea, Yuu Jinnai, Akihi
 $[2]$ "Parallel A* Graph Search". Ariana Weinstock, Rachel Holladay.
 
 $[3]$ “Algorithms for distributed termination detection”. Friedemann Mattern. 1987.
-
