@@ -524,15 +524,15 @@ _**Highlighted testing choices**_:
 
 
 ### 3.2.8 Elapsed time and memory usage plots
-![plot01_10](./doc_images/01_10.png "")
-![plot02_11](./doc_images/02_11.png "")
-![plot03_12](./doc_images/03_12.png "")
-![plot04_13](./doc_images/04_13.png "")
-![plot05_14](./doc_images/05_14.png "")
-![plot06_15](./doc_images/06_15.png "")
-![plot07_16](./doc_images/07_16.png "")
-![plot08_17](./doc_images/08_17.png "")
-![plot09_18](./doc_images/09_18.png "")
+![plot01_10](./doc/doc_images/01_10.png "")
+![plot02_11](./doc/doc_images/02_11.png "")
+![plot03_12](./doc/doc_images/03_12.png "")
+![plot04_13](./doc/doc_images/04_13.png "")
+![plot05_14](./doc/doc_images/05_14.png "")
+![plot06_15](./doc/doc_images/06_15.png "")
+![plot07_16](./doc/doc_images/07_16.png "")
+![plot08_17](./doc/doc_images/08_17.png "")
+![plot09_18](./doc/doc_images/09_18.png "")
 
 \
 _**Interpretation of the observed performance**_:
@@ -558,7 +558,7 @@ In the following we report the time/memory performance of each A* version on a g
 |           16          |                 |        -        | 0.694593 / 14.8438 | 1.78775 / 16.1016 |
 
 
-![plot19_20](./doc_images/19_20.png "")
+![plot19_20](./doc/doc_images/19_20.png "")
 
 
 # References
