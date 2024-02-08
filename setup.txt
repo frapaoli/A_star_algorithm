@@ -1,0 +1,91 @@
+/******************************************/
+/*                                        */
+/*    A* ALGORITHM PROJECT USER MANUAL    */
+/*                                        */
+/******************************************/
+
+Authors: Paoli Leonardi Francesco (s297078), Pasqualini Federico (s296488)
+
+
+This file aims at guiding the user through a correct usage of the functionalities implemented in the A* algorithm project.
+
+
+/********** PROJECT FOLDER **********/
+
+The project folder contains:
+1. doc: folder containing the documentation of the project.
+	1.1. DOC.md: Markdown file of the documentation.
+	1.2. doc_images: folder containing the images referenced by the Markdown file.
+2. src: folder containing the source files.
+	2.1. main.cpp: main function that calls all project modules.
+	2.2. graph_gen_store_load.cpp/.h: functions for generating, storing and loading graphs.
+	2.3. a_star.cpp/.h: functions that implement A* algorithm versions.
+	2.4. utilities.cpp/.h: functions providing utilities to other modules.
+	2.5. menu.cpp/.h: provides a guided user interface to correctly generate a graph and/or run the A*.
+	2.6. Makefile: simple makefile for compiling the project.
+3. graph_examples.zip: files containing some example graphs on which A* can be run.
+4. project_ppt_presentation.pptx: PowerPoint project presentation.
+5. project_ppt_presentation.pdf: PDF format of the project presentation.
+6. README.md: project's README file.
+7. setup.txt: this document.
+
+
+/********** INTRODUCTION **********/
+
+The code implements the A* algorithm with different levels of parallelism, as well as the possibility to parallely generate graphs of given amount of nodes.
+
+The main functionalities are listed below:
+- Generate a graph.
+- Run the Sequential A* on a graph.
+- Run the Centralized A* on a graph.
+- Run the Decentralized A* (MHDA*, ZHDA* and AZHDA*) on a graph.
+
+Details regarding the design and implementation of the above functionalities can be found in the project documentation.
+
+
+NOTE: This software was only tested on Linux Ubuntu and that is the only OS we will take into consideration.
+
+
+/********** INSTALLATIONS **********/
+
+1. Make sure to have "g++" and "make" installed. You can install them with the following command:
+
+> sudo apt install build-essential
+
+2. The project can be build through the attached "Makefile" by opening a terminal in the src folder and running:
+
+> make
+
+or by running directly:
+
+> g++ -Wall main.cpp graph_gen_store_load.cpp a_star.cpp utilities.cpp menu.cpp -o main -pthread
+
+The build process will generate a binary file called "main" that will be the executable.
+
+
+/********** RUNNING **********/
+
+You can run the program by opening a terminal in the src folder and running:
+
+> ./main /path/to/file.txt
+
+The "main" program expects exactly one parameter that is the path to the file where the graph will be read from (in case the user wants to run the A*) or written into (in case the user wants to generate a new graph). The file name must contain the extension. The following is an example of correct program call:
+
+> ./main graph.txt
+
+Once run, a menu will guide you to choose one among the following options:
+1. Generate a new graph of a given amount of nodes and store it in the file specified as program parameter.
+2. Read the graph contained in the file specified as program parameter and run one or more A* versions on it.
+
+The menu will also let you choose the execution parameters, e.g., number of threads to launch, hashing method to be used etc...
+
+
+/********** DEBUG MODE **********/
+
+For testing purposes, we implemented an easy way to skip the initial menu and execute the program by reading the settings that have been hardcoded by the user directly in the source code. To do so, the user can set the "DEBUG_MODE" flag (defined in "utilities.h" file) to 1 and then edit the program settings in the "debug_program_inputs" function in "utilities.cpp".
+
+
+
+
+
+
